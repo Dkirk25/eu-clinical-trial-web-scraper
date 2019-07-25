@@ -2,6 +2,7 @@ package com.clincaloutcome;
 
 import com.clincaloutcome.model.EUClinical;
 import com.clincaloutcome.model.USClinical;
+import com.poiji.bind.Poiji;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.*;
@@ -44,6 +45,19 @@ public class Runner {
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
+
+        System.out.println("Trying to cross reference two files? (y)es or (n)o:");
+        String crossRef = sc.nextLine();
+
+        if (crossRef.equalsIgnoreCase("y")) {
+            System.out.println("Enter US Clinical Trial:");
+            String usTrail = sc.nextLine();
+
+            System.out.println("Enter EU Clinical Trial:");
+            String euTrail = sc.nextLine();
+
+            extractMatchesFromBothLists(usTrail, euTrail);
+        }
 
         System.out.println("Upload a txt File? (y)es or (n)o: ");
         String f = sc.nextLine();
@@ -297,65 +311,102 @@ public class Runner {
     }
 
 
-    public static List readUSClinicalCSV(String file) {
-        List<USClinical> listOfClinicalValues = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            String line = br.readLine();
+//    public static List readUSClinicalCSV(String file) {
+//        List<USClinical> listOfClinicalValues = new ArrayList<>();
+//        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+//            String line = br.readLine();
+//
+//            while ((line = br.readLine()) != null && !line.isEmpty()) {
+//                String[] fields = line.split(",");
+//                String rank = fields[0];
+//                String ntcNumber = fields[1];
+//                String title = fields[2];
+//                String acronym = fields[3];
+//                String status = fields[4];
+//                String study = fields[5];
+//                String result = fields[6];
+//                String condition = fields[7];
+//                String intervention = fields[8];
+//                String outcomeMeasure = fields[9];
+//                String measures = fields[10];
+//                String sponsor = fields[11];
+//                String gender = fields[12];
+//                String age = fields[13];
+//                String phases = fields[14];
+//                String enrollment = fields[15];
+//                String fundedBy = fields[16];
+//                String studyType = fields[17];
+//                String studyDesign = fields[18];
+//                String otherId = fields[19];
+//                String startDate = fields[20];
+//                String primaryCompletionDate = fields[21];
+//                String completionDate = fields[22];
+//                String firstPosted = fields[23];
+//                String resultFirstPosted = fields[24];
+//                String lastUpdatePosted = fields[25];
+//                String locations = fields[26];
+//                String studyDocuments = fields[27];
+//                String url = fields[28];
+//
+//                USClinical usClinical = new USClinical(rank, ntcNumber, title, acronym, status, study, result, condition,
+//                        intervention, outcomeMeasure, measures, sponsor, gender, age, phases, enrollment, fundedBy, studyType,
+//                        studyDesign, otherId, startDate, primaryCompletionDate, completionDate, firstPosted, resultFirstPosted,
+//                        lastUpdatePosted, locations, studyDocuments, url);
+//
+//                listOfClinicalValues.add(usClinical);
+//            }
+//
+//        } catch (IOException e) {
+//            System.out.println("Can't Read US Clinical CSV file");
+//        }
+//        return listOfClinicalValues;
+//    }
 
-            while ((line = br.readLine()) != null && !line.isEmpty()) {
-                String[] fields = line.split(",");
-                String rank = fields[0];
-                String ntcNumber = fields[1];
-                String title = fields[2];
-                String acronym = fields[3];
-                String status = fields[4];
-                String study = fields[5];
-                String result = fields[6];
-                String condition = fields[7];
-                String intervention = fields[8];
-                String outcomeMeasure = fields[9];
-                String measures = fields[10];
-                String sponsor = fields[11];
-                String gender = fields[12];
-                String age = fields[13];
-                String phases = fields[14];
-                String enrollment = fields[15];
-                String fundedBy = fields[16];
-                String studyType = fields[17];
-                String studyDesign = fields[18];
-                String otherId = fields[19];
-                String startDate = fields[20];
-                String primaryCompletionDate = fields[21];
-                String completionDate = fields[22];
-                String firstPosted = fields[23];
-                String resultFirstPosted = fields[24];
-                String lastUpdatePosted = fields[25];
-                String locations = fields[26];
-                String studyDocuments = fields[27];
-                String url = fields[28];
+    private static List<EUClinical> readExcelFile(String file) {
+        return Poiji.fromExcel(new File(file), EUClinical.class);
+    }
 
-                USClinical usClinical = new USClinical(rank, ntcNumber, title, acronym, status, study, result, condition,
-                        intervention, outcomeMeasure, measures, sponsor, gender, age, phases, enrollment, fundedBy, studyType,
-                        studyDesign, otherId, startDate, primaryCompletionDate, completionDate, firstPosted, resultFirstPosted,
-                        lastUpdatePosted, locations, studyDocuments, url);
+    private static List<USClinical> readFromFile(String file) {
 
-                listOfClinicalValues.add(usClinical);
+        List<USClinical> list = new ArrayList<>();
+
+        if (file.length() > 0 && file.endsWith(".txt")) {
+
+            try (Stream<String> files = Files.lines(Paths.get(file))) {
+                files.forEach(fileLines::add);
+
+                fileLines.forEach(fileLine -> {
+                    String[] line = fileLine.split(" ");
+                    String header = line[0];
+                    String value = line[1];
+
+                    iterateThroughValues(value, list);
+
+
+                });
+            } catch (IOException e) {
+                System.out.println("Can't Read File.");
             }
-
-        } catch (IOException e) {
-            System.out.println("Can't Read US Clinical CSV file");
+        } else {
+            System.out.println("File type must end with .txt");
+            System.exit(0);
         }
-        return listOfClinicalValues;
+
+        return null;
+    }
+
+    private static void iterateThroughValues(String value, List<USClinical> list) {
+
     }
 
 
-    public List<String> extractMatchesFromBothLists(List<USClinical> usClinicalList, List<EUClinical> euClinicalList) {
+    public static List<String> extractMatchesFromBothLists(String usFile, String euFile) {
         // Take list of US Clinical CSV file
-
+        List<USClinical> usClinicalList = readFromFile(usFile);
         // Take list of EU Clinical excel file
-
+        List<EUClinical> euClinicalList = readExcelFile(euFile);
         // Compare both, extract the ones that are same base on "other ids" (US) and protocol number (EU)
-
+        //  List<String> matchedList =
         // then create new list
 
         return null;
