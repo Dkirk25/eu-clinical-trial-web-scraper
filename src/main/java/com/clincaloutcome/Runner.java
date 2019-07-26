@@ -13,12 +13,16 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.awt.*;
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Runner {
@@ -51,12 +55,15 @@ public class Runner {
 
         if (crossRef.equalsIgnoreCase("y")) {
             System.out.println("Enter US Clinical Trial:");
-            String usTrail = sc.nextLine();
+            String usTrail = "USTrials.xlsx";
 
             System.out.println("Enter EU Clinical Trial:");
-            String euTrail = sc.nextLine();
+            String euTrail = "EUClinicalTrails.xlsx";
 
-            extractMatchesFromBothLists(usTrail, euTrail);
+            List<EUClinical> newList = extractMatchesFromBothLists(usTrail, euTrail);
+
+            // Create Excel Document with new EU list.
+
         }
 
         System.out.println("Upload a txt File? (y)es or (n)o: ");
@@ -310,105 +317,27 @@ public class Runner {
         }
     }
 
-
-//    public static List readUSClinicalCSV(String file) {
-//        List<USClinical> listOfClinicalValues = new ArrayList<>();
-//        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-//            String line = br.readLine();
-//
-//            while ((line = br.readLine()) != null && !line.isEmpty()) {
-//                String[] fields = line.split(",");
-//                String rank = fields[0];
-//                String ntcNumber = fields[1];
-//                String title = fields[2];
-//                String acronym = fields[3];
-//                String status = fields[4];
-//                String study = fields[5];
-//                String result = fields[6];
-//                String condition = fields[7];
-//                String intervention = fields[8];
-//                String outcomeMeasure = fields[9];
-//                String measures = fields[10];
-//                String sponsor = fields[11];
-//                String gender = fields[12];
-//                String age = fields[13];
-//                String phases = fields[14];
-//                String enrollment = fields[15];
-//                String fundedBy = fields[16];
-//                String studyType = fields[17];
-//                String studyDesign = fields[18];
-//                String otherId = fields[19];
-//                String startDate = fields[20];
-//                String primaryCompletionDate = fields[21];
-//                String completionDate = fields[22];
-//                String firstPosted = fields[23];
-//                String resultFirstPosted = fields[24];
-//                String lastUpdatePosted = fields[25];
-//                String locations = fields[26];
-//                String studyDocuments = fields[27];
-//                String url = fields[28];
-//
-//                USClinical usClinical = new USClinical(rank, ntcNumber, title, acronym, status, study, result, condition,
-//                        intervention, outcomeMeasure, measures, sponsor, gender, age, phases, enrollment, fundedBy, studyType,
-//                        studyDesign, otherId, startDate, primaryCompletionDate, completionDate, firstPosted, resultFirstPosted,
-//                        lastUpdatePosted, locations, studyDocuments, url);
-//
-//                listOfClinicalValues.add(usClinical);
-//            }
-//
-//        } catch (IOException e) {
-//            System.out.println("Can't Read US Clinical CSV file");
-//        }
-//        return listOfClinicalValues;
-//    }
-
-    private static List<EUClinical> readExcelFile(String file) {
-        return Poiji.fromExcel(new File(file), EUClinical.class);
+    private static <T> List<T> readExcelFile(String file, Class<T> requestClass) {
+        return Poiji.fromExcel(new File(file), requestClass);
     }
 
-    private static List<USClinical> readFromFile(String file) {
-
-        List<USClinical> list = new ArrayList<>();
-
-        if (file.length() > 0 && file.endsWith(".txt")) {
-
-            try (Stream<String> files = Files.lines(Paths.get(file))) {
-                files.forEach(fileLines::add);
-
-                fileLines.forEach(fileLine -> {
-                    String[] line = fileLine.split(" ");
-                    String header = line[0];
-                    String value = line[1];
-
-                    iterateThroughValues(value, list);
-
-
-                });
-            } catch (IOException e) {
-                System.out.println("Can't Read File.");
-            }
-        } else {
-            System.out.println("File type must end with .txt");
-            System.exit(0);
-        }
-
-        return null;
-    }
-
-    private static void iterateThroughValues(String value, List<USClinical> list) {
-
-    }
-
-
-    public static List<String> extractMatchesFromBothLists(String usFile, String euFile) {
+    private static List<EUClinical> extractMatchesFromBothLists(String usFile, String euFile) {
         // Take list of US Clinical CSV file
-        List<USClinical> usClinicalList = readFromFile(usFile);
+        List<USClinical> usClinicalList = readExcelFile(usFile, USClinical.class);
         // Take list of EU Clinical excel file
-        List<EUClinical> euClinicalList = readExcelFile(euFile);
+        List<EUClinical> euClinicalList = readExcelFile(euFile, EUClinical.class);
         // Compare both, extract the ones that are same base on "other ids" (US) and protocol number (EU)
-        //  List<String> matchedList =
-        // then create new list
 
-        return null;
+        // then create new list
+        Set<String> getOtherIds = usClinicalList.stream()
+                .map(USClinical::getOtherId)
+                .collect(Collectors.toSet());
+
+        // stream the list and use the set to filter it
+        List<EUClinical> newList = euClinicalList.stream()
+                .filter(e -> !getOtherIds.contains(e.getSponsorProtocolNumber()))
+                .collect(Collectors.toList());
+
+        return newList;
     }
 }

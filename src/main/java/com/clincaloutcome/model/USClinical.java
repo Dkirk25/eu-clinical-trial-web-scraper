@@ -1,74 +1,63 @@
 package com.clincaloutcome.model;
 
+import com.poiji.annotation.ExcelCell;
+
 public class USClinical {
 
+    @ExcelCell(0)
     private String rank;
+    @ExcelCell(1)
     private String ntcNumber;
+    @ExcelCell(2)
     private String title;
+    @ExcelCell(3)
     private String acronym;
+    @ExcelCell(4)
     private String status;
-    private String study;
-    private String result;
+    @ExcelCell(5)
+    private String studyResults;
+    @ExcelCell(6)
     private String condition;
+    @ExcelCell(7)
     private String intervention;
+    @ExcelCell(8)
     private String outcomeMeasure;
-    private String measures;
+    @ExcelCell(9)
     private String sponsor;
+    @ExcelCell(10)
     private String gender;
+    @ExcelCell(11)
     private String age;
+    @ExcelCell(12)
     private String phases;
+    @ExcelCell(13)
     private String enrollment;
+    @ExcelCell(14)
     private String fundedBy;
+    @ExcelCell(15)
     private String studyType;
+    @ExcelCell(16)
     private String studyDesign;
+    @ExcelCell(17)
     private String otherId;
+    @ExcelCell(18)
     private String startDate;
+    @ExcelCell(19)
     private String primaryCompletionDate;
+    @ExcelCell(20)
     private String completionDate;
+    @ExcelCell(21)
     private String firstPosted;
+    @ExcelCell(22)
     private String resultFirstPosted;
+    @ExcelCell(23)
     private String lastUpdatePosted;
+    @ExcelCell(24)
     private String locations;
+    @ExcelCell(25)
     private String studyDocuments;
+    @ExcelCell(26)
     private String url;
-
-    public USClinical(String rank, String ntcNumber, String title, String acronym, String status,
-                      String study, String result, String condition, String intervention,
-                      String outcomeMeasure, String measures, String sponsor, String gender,
-                      String age, String phases, String enrollment, String fundedBy, String studyType,
-                      String studyDesign, String otherId, String startDate, String primaryCompletionDate,
-                      String completionDate, String firstPosted, String resultFirstPosted, String lastUpdatePosted,
-                      String locations, String studyDocuments, String url) {
-        this.rank = rank;
-        this.ntcNumber = ntcNumber;
-        this.title = title;
-        this.acronym = acronym;
-        this.status = status;
-        this.study = study;
-        this.result = result;
-        this.condition = condition;
-        this.intervention = intervention;
-        this.outcomeMeasure = outcomeMeasure;
-        this.measures = measures;
-        this.sponsor = sponsor;
-        this.gender = gender;
-        this.age = age;
-        this.phases = phases;
-        this.enrollment = enrollment;
-        this.fundedBy = fundedBy;
-        this.studyType = studyType;
-        this.studyDesign = studyDesign;
-        this.otherId = otherId;
-        this.startDate = startDate;
-        this.primaryCompletionDate = primaryCompletionDate;
-        this.completionDate = completionDate;
-        this.firstPosted = firstPosted;
-        this.resultFirstPosted = resultFirstPosted;
-        this.lastUpdatePosted = lastUpdatePosted;
-        this.locations = locations;
-        this.studyDocuments = studyDocuments;
-        this.url = url;
-    }
 
     public String getRank() {
         return rank;
@@ -110,20 +99,12 @@ public class USClinical {
         this.status = status;
     }
 
-    public String getStudy() {
-        return study;
+    public String getStudyResults() {
+        return studyResults;
     }
 
-    public void setStudy(String study) {
-        this.study = study;
-    }
-
-    public String getResult() {
-        return result;
-    }
-
-    public void setResult(String result) {
-        this.result = result;
+    public void setStudyResults(String studyResults) {
+        this.studyResults = studyResults;
     }
 
     public String getCondition() {
@@ -148,14 +129,6 @@ public class USClinical {
 
     public void setOutcomeMeasure(String outcomeMeasure) {
         this.outcomeMeasure = outcomeMeasure;
-    }
-
-    public String getMeasures() {
-        return measures;
-    }
-
-    public void setMeasures(String measures) {
-        this.measures = measures;
     }
 
     public String getSponsor() {
