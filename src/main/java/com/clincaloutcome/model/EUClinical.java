@@ -1,34 +1,35 @@
 package com.clincaloutcome.model;
 
 import com.poiji.annotation.ExcelCell;
+import com.poiji.annotation.ExcelCellName;
 
 public class EUClinical {
 
-    @ExcelCell(0)
+    @ExcelCellName("EudraCT Number")
     private String eudraNumber;
-    @ExcelCell(1)
+    @ExcelCellName("Sponsor Protocol Number")
     private String sponsorProtocolNumber;
-    @ExcelCell(2)
+    @ExcelCellName("Start Date")
     private String startDate;
-    @ExcelCell(3)
+    @ExcelCellName("Sponsor Name")
     private String sponsorName;
-    @ExcelCell(4)
+    @ExcelCellName("Full Title")
     private String fullTitle;
-    @ExcelCell(5)
+    @ExcelCellName("Medical Condition")
     private String medicalCondition;
-    @ExcelCell(6)
+    @ExcelCellName("Disease")
     private String disease;
-    @ExcelCell(7)
+    @ExcelCellName("Population Age")
     private String populationAge;
-    @ExcelCell(8)
+    @ExcelCellName("Gender")
     private String gender;
-    @ExcelCell(9)
-    private String trailProtocol;
-    @ExcelCell(10)
+    @ExcelCellName("Trial Protocol")
+    private String trialProtocol;
+    @ExcelCellName("Trial Result")
     private String trialResult;
-    @ExcelCell(11)
+    @ExcelCellName("Primary End Points")
     private String primaryEndPoint;
-    @ExcelCell(12)
+    @ExcelCellName("Secondary End points")
     private String secondaryEndPoint;
 
     public String getEudraNumber() {
@@ -103,12 +104,12 @@ public class EUClinical {
         this.gender = gender;
     }
 
-    public String getTrailProtocol() {
-        return trailProtocol;
+    public String getTrialProtocol() {
+        return trialProtocol;
     }
 
-    public void setTrailProtocol(String trailProtocol) {
-        this.trailProtocol = trailProtocol;
+    public void setTrailProtocol(String trialProtocol) {
+        this.trialProtocol = trialProtocol;
     }
 
     public String getTrialResult() {

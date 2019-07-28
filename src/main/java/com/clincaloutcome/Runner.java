@@ -18,12 +18,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toCollection;
 
 public class Runner {
 
@@ -58,12 +62,13 @@ public class Runner {
             String usTrail = "USTrials.xlsx";
 
             System.out.println("Enter EU Clinical Trial:");
-            String euTrail = "EUClinicalTrails.xlsx";
+            String euTrail = "EUList.xlsx";
 
             List<EUClinical> newList = extractMatchesFromBothLists(usTrail, euTrail);
 
             // Create Excel Document with new EU list.
-
+            printEUListToExcel(newList);
+            System.exit(0);
         }
 
         System.out.println("Upload a txt File? (y)es or (n)o: ");
@@ -76,14 +81,22 @@ public class Runner {
             // Process Bulk File.
             createUsingBulkFile(bulk);
         } else {
-            System.out.println("Enter Url: ");
-            String url = sc.nextLine();
-            System.out.println("How Many Pages: ");
-            String pages = sc.nextLine();
+            System.out.println("Use Single Search? (y)es or (n)o: ");
+            String single = sc.nextLine();
 
-            iterateThroughUrlAndPage(url, pages);
+            if (single.equalsIgnoreCase("y")) {
+
+                System.out.println("Enter Url: ");
+                String url = sc.nextLine();
+                System.out.println("How Many Pages: ");
+                String pages = sc.nextLine();
+
+                iterateThroughUrlAndPage(url, pages);
+            } else {
+                System.exit(0);
+            }
         }
-        printToExcel();
+        printFromFileToExcel();
     }
 
     private static void createUsingBulkFile(String bulk) {
@@ -248,7 +261,7 @@ public class Runner {
         return word.trim();
     }
 
-    private static void printToExcel() {
+    private static void printFromFileToExcel() {
         String[] columns = {"EudraCT Number", "Sponsor Protocol Number", "Start Date", "Sponsor Name", "Full Title", "Medical condition", "Disease", "Population Age", "Gender", "Trial Protocol", "Trial results", "Primary End Points", "Secondary End Points"};
 
         try (Workbook workbook = new XSSFWorkbook()) {
@@ -303,7 +316,7 @@ public class Runner {
             }
 
             // Write the output to a file
-            FileOutputStream fileOut = new FileOutputStream("/Users/donald/Desktop/EUClinicalTrails.xlsx");
+            FileOutputStream fileOut = new FileOutputStream("../EUClinicalTrails.xlsx");
             workbook.write(fileOut);
             fileOut.close();
 
@@ -317,27 +330,150 @@ public class Runner {
         }
     }
 
+    private static void printEUListToExcel(List<EUClinical> euClinicalList) {
+        String[] columns = {"EudraCT Number", "Sponsor Protocol Number", "Start Date", "Sponsor Name", "Full Title", "Medical condition", "Disease", "Population Age", "Gender", "Trial Protocol", "Trial results", "Primary End Points", "Secondary End Points"};
+
+        try (Workbook workbook = new XSSFWorkbook()) {
+
+            // Create a Font for styling header cells
+            Font headerFont = workbook.createFont();
+            headerFont.setBold(true);
+            headerFont.setFontHeightInPoints((short) 14);
+            headerFont.setColor(IndexedColors.BLACK.getIndex());
+
+            // Create a CellStyle with the font
+            CellStyle headerCellStyle = workbook.createCellStyle();
+            headerCellStyle.setFont(headerFont);
+
+            // Create a Sheet
+            Sheet sheet = workbook.createSheet("MatchedEUClinical");
+
+            // Create a Row
+            Row headerRow = sheet.createRow(0);
+
+            // Create cells
+            for (int i = 0; i < columns.length; i++) {
+                Cell cell = headerRow.createCell(i);
+                cell.setCellValue(columns[i]);
+                cell.setCellStyle(headerCellStyle);
+            }
+
+            int rowNum = 1;
+
+            for (EUClinical euClinical : euClinicalList) {
+
+                Row row = sheet.createRow(rowNum++);
+
+                row.createCell(0).setCellValue(euClinical.getEudraNumber());
+                row.createCell(1).setCellValue(euClinical.getSponsorProtocolNumber());
+                row.createCell(2).setCellValue(euClinical.getStartDate());
+                row.createCell(3).setCellValue(euClinical.getSponsorName());
+                row.createCell(4).setCellValue(euClinical.getFullTitle());
+                row.createCell(5).setCellValue(euClinical.getMedicalCondition());
+                row.createCell(6).setCellValue(euClinical.getDisease());
+                row.createCell(7).setCellValue(euClinical.getPopulationAge());
+                row.createCell(8).setCellValue(euClinical.getGender());
+                row.createCell(9).setCellValue(euClinical.getTrialProtocol());
+                row.createCell(10).setCellValue(euClinical.getTrialResult());
+                row.createCell(11).setCellValue(euClinical.getPrimaryEndPoint());
+                row.createCell(12).setCellValue(euClinical.getSecondaryEndPoint());
+            }
+
+            // Resize all columns to fit the content size
+            for (int i = 0; i < columns.length; i++) {
+                sheet.autoSizeColumn(i);
+            }
+
+            // Write the output to a file
+            FileOutputStream fileOut = new FileOutputStream("../MatchedEUClinicalTrails.xlsx");
+            workbook.write(fileOut);
+            fileOut.close();
+
+        } catch (IOException e) {
+            System.out.println("Can't Parse File.");
+        }
+        try {
+            Desktop.getDesktop().open(new File("../MatchedEUClinicalTrails.xlsx"));
+        } catch (IOException e) {
+            System.out.println("Can't AutoOpen Excel File.");
+        }
+    }
+
     private static <T> List<T> readExcelFile(String file, Class<T> requestClass) {
         return Poiji.fromExcel(new File(file), requestClass);
+    }
+
+    private static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor) {
+        Map<Object, Boolean> map = new ConcurrentHashMap<>();
+        return t -> map.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
     }
 
     private static List<EUClinical> extractMatchesFromBothLists(String usFile, String euFile) {
         // Take list of US Clinical CSV file
         List<USClinical> usClinicalList = readExcelFile(usFile, USClinical.class);
+
+        List<USClinical> usListWithoutDuplicates = usClinicalList.stream()
+                .collect(collectingAndThen(toCollection(() ->
+                                new TreeSet<>(
+                                        Comparator.comparing(USClinical::getOtherId,
+                                                Comparator.nullsFirst(Comparator.naturalOrder())))),
+                        ArrayList::new));
+
+        // This needs to handle null
+//        List<USClinical> distinctUSList = usClinicalList.stream()
+//                .filter(distinctByKey(USClinical::getOtherId))
+//                .collect(Collectors.toList());
+
+
         // Take list of EU Clinical excel file
         List<EUClinical> euClinicalList = readExcelFile(euFile, EUClinical.class);
+
+//        List<EUClinical> distinctEUList = euClinicalList.stream()
+//                .filter(distinctByKey(EUClinical::getSponsorProtocolNumber))
+//                .collect(Collectors.toList());
+
+        List<EUClinical> distinctEUList1 = euClinicalList.stream()
+                .collect(collectingAndThen(toCollection(() ->
+                                new TreeSet<>(
+                                        Comparator.comparing(EUClinical::getSponsorProtocolNumber,
+                                                Comparator.nullsFirst(Comparator.naturalOrder())))),
+                        ArrayList::new));
+
         // Compare both, extract the ones that are same base on "other ids" (US) and protocol number (EU)
 
         // then create new list
-        Set<String> getOtherIds = usClinicalList.stream()
+        Set<String> getOtherIds = usListWithoutDuplicates.stream()
                 .map(USClinical::getOtherId)
                 .collect(Collectors.toSet());
 
-        // stream the list and use the set to filter it
-        List<EUClinical> newList = euClinicalList.stream()
-                .filter(e -> !getOtherIds.contains(e.getSponsorProtocolNumber()))
-                .collect(Collectors.toList());
 
-        return newList;
+        // stream the list and use the set to filter it
+
+        // List<EUClinical> filteredList = standardSort(distinctEUList1, usListWithoutDuplicates);
+
+        return distinctEUList1.stream()
+                .filter(eu -> getOtherIds.stream()
+                        .noneMatch(us ->
+                                eu.getSponsorProtocolNumber().contains(us)))
+                .collect(Collectors.toList());
+    }
+
+    private static List<EUClinical> standardSort(List<EUClinical> obj1, List<USClinical> obj2) {
+        List<EUClinical> returnList = new ArrayList<>();
+        for (EUClinical euClinical : obj1) {
+            boolean found = false;
+            for (USClinical usClinical : obj2) {
+                if (!StringUtils.isEmpty(euClinical.getSponsorProtocolNumber())) {
+                    if (euClinical.getSponsorProtocolNumber().contains(usClinical.getOtherId())) {
+                        found = true;
+                    }
+                }
+            }
+            if (!found) {
+                returnList.add(euClinical);
+            }
+        }
+
+        return returnList;
     }
 }
