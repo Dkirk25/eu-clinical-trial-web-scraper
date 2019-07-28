@@ -1,35 +1,34 @@
 package com.clincaloutcome.model;
 
 import com.poiji.annotation.ExcelCell;
-import com.poiji.annotation.ExcelCellName;
 
 public class EUClinical {
 
-    @ExcelCellName("EudraCT Number")
+    @ExcelCell(0)
     private String eudraNumber;
-    @ExcelCellName("Sponsor Protocol Number")
+    @ExcelCell(1)
     private String sponsorProtocolNumber;
-    @ExcelCellName("Start Date")
+    @ExcelCell(2)
     private String startDate;
-    @ExcelCellName("Sponsor Name")
+    @ExcelCell(3)
     private String sponsorName;
-    @ExcelCellName("Full Title")
+    @ExcelCell(4)
     private String fullTitle;
-    @ExcelCellName("Medical Condition")
+    @ExcelCell(5)
     private String medicalCondition;
-    @ExcelCellName("Disease")
+    @ExcelCell(6)
     private String disease;
-    @ExcelCellName("Population Age")
+    @ExcelCell(7)
     private String populationAge;
-    @ExcelCellName("Gender")
+    @ExcelCell(8)
     private String gender;
-    @ExcelCellName("Trial Protocol")
+    @ExcelCell(9)
     private String trialProtocol;
-    @ExcelCellName("Trial Result")
+    @ExcelCell(10)
     private String trialResult;
-    @ExcelCellName("Primary End Points")
+    @ExcelCell(11)
     private String primaryEndPoint;
-    @ExcelCellName("Secondary End points")
+    @ExcelCell(12)
     private String secondaryEndPoint;
 
     public String getEudraNumber() {
@@ -108,7 +107,7 @@ public class EUClinical {
         return trialProtocol;
     }
 
-    public void setTrailProtocol(String trialProtocol) {
+    public void setTrialProtocol(String trialProtocol) {
         this.trialProtocol = trialProtocol;
     }
 

@@ -20,9 +20,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -59,10 +56,10 @@ public class Runner {
 
         if (crossRef.equalsIgnoreCase("y")) {
             System.out.println("Enter US Clinical Trial:");
-            String usTrail = "USTrials.xlsx";
+            String usTrail = sc.nextLine();
 
             System.out.println("Enter EU Clinical Trial:");
-            String euTrail = "EUList.xlsx";
+            String euTrail = sc.nextLine();
 
             List<EUClinical> newList = extractMatchesFromBothLists(usTrail, euTrail);
 
@@ -262,7 +259,7 @@ public class Runner {
     }
 
     private static void printFromFileToExcel() {
-        String[] columns = {"EudraCT Number", "Sponsor Protocol Number", "Start Date", "Sponsor Name", "Full Title", "Medical condition", "Disease", "Population Age", "Gender", "Trial Protocol", "Trial results", "Primary End Points", "Secondary End Points"};
+        String[] columns = {"EudraCT Number", "Sponsor Protocol Number", "Start Date", "Sponsor Name", "Full Title", "Medical Condition", "Disease", "Population Age", "Gender", "Trial Protocol", "Trial Results", "Primary End Points", "Secondary End Points"};
 
         try (Workbook workbook = new XSSFWorkbook()) {
 
@@ -331,7 +328,7 @@ public class Runner {
     }
 
     private static void printEUListToExcel(List<EUClinical> euClinicalList) {
-        String[] columns = {"EudraCT Number", "Sponsor Protocol Number", "Start Date", "Sponsor Name", "Full Title", "Medical condition", "Disease", "Population Age", "Gender", "Trial Protocol", "Trial results", "Primary End Points", "Secondary End Points"};
+        String[] columns = {"EudraCT Number", "Sponsor Protocol Number", "Start Date", "Sponsor Name", "Full Title", "Medical Condition", "Disease", "Population Age", "Gender", "Trial Protocol", "Trial Results", "Primary End Points", "Secondary End Points"};
 
         try (Workbook workbook = new XSSFWorkbook()) {
 
@@ -403,11 +400,6 @@ public class Runner {
         return Poiji.fromExcel(new File(file), requestClass);
     }
 
-    private static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor) {
-        Map<Object, Boolean> map = new ConcurrentHashMap<>();
-        return t -> map.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
-    }
-
     private static List<EUClinical> extractMatchesFromBothLists(String usFile, String euFile) {
         // Take list of US Clinical CSV file
         List<USClinical> usClinicalList = readExcelFile(usFile, USClinical.class);
@@ -419,18 +411,8 @@ public class Runner {
                                                 Comparator.nullsFirst(Comparator.naturalOrder())))),
                         ArrayList::new));
 
-        // This needs to handle null
-//        List<USClinical> distinctUSList = usClinicalList.stream()
-//                .filter(distinctByKey(USClinical::getOtherId))
-//                .collect(Collectors.toList());
-
-
         // Take list of EU Clinical excel file
         List<EUClinical> euClinicalList = readExcelFile(euFile, EUClinical.class);
-
-//        List<EUClinical> distinctEUList = euClinicalList.stream()
-//                .filter(distinctByKey(EUClinical::getSponsorProtocolNumber))
-//                .collect(Collectors.toList());
 
         List<EUClinical> distinctEUList1 = euClinicalList.stream()
                 .collect(collectingAndThen(toCollection(() ->
@@ -439,41 +421,16 @@ public class Runner {
                                                 Comparator.nullsFirst(Comparator.naturalOrder())))),
                         ArrayList::new));
 
-        // Compare both, extract the ones that are same base on "other ids" (US) and protocol number (EU)
-
         // then create new list
         Set<String> getOtherIds = usListWithoutDuplicates.stream()
                 .map(USClinical::getOtherId)
                 .collect(Collectors.toSet());
 
 
-        // stream the list and use the set to filter it
-
-        // List<EUClinical> filteredList = standardSort(distinctEUList1, usListWithoutDuplicates);
-
         return distinctEUList1.stream()
                 .filter(eu -> getOtherIds.stream()
                         .noneMatch(us ->
                                 eu.getSponsorProtocolNumber().contains(us)))
                 .collect(Collectors.toList());
-    }
-
-    private static List<EUClinical> standardSort(List<EUClinical> obj1, List<USClinical> obj2) {
-        List<EUClinical> returnList = new ArrayList<>();
-        for (EUClinical euClinical : obj1) {
-            boolean found = false;
-            for (USClinical usClinical : obj2) {
-                if (!StringUtils.isEmpty(euClinical.getSponsorProtocolNumber())) {
-                    if (euClinical.getSponsorProtocolNumber().contains(usClinical.getOtherId())) {
-                        found = true;
-                    }
-                }
-            }
-            if (!found) {
-                returnList.add(euClinical);
-            }
-        }
-
-        return returnList;
     }
 }
