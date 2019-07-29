@@ -56,10 +56,10 @@ public class Runner {
 
         if (crossRef.equalsIgnoreCase("y")) {
             System.out.println("Enter US Clinical Trial:");
-            String usTrail = sc.nextLine();
+            String usTrail = "USsearch.xlsx";
 
             System.out.println("Enter EU Clinical Trial:");
-            String euTrail = sc.nextLine();
+            String euTrail = "NewEUListChildren.xlsx";
 
             List<EUClinical> newList = extractMatchesFromBothLists(usTrail, euTrail);
 
@@ -426,11 +426,28 @@ public class Runner {
                 .map(USClinical::getOtherId)
                 .collect(Collectors.toSet());
 
+        return removeUSProtocolsFromEUList(distinctEUList1, getOtherIds);
 
-        return distinctEUList1.stream()
-                .filter(eu -> getOtherIds.stream()
-                        .noneMatch(us ->
-                                eu.getSponsorProtocolNumber().contains(us)))
-                .collect(Collectors.toList());
+
+//        return distinctEUList1.stream()
+//                .filter(eu -> getOtherIds.stream()
+//                        .noneMatch(us ->
+//                                eu.getSponsorProtocolNumber().contains(us)))
+//                .collect(Collectors.toList());
+    }
+
+
+    private static List<EUClinical> removeUSProtocolsFromEUList(List<EUClinical> euList, Set<String> otherIds) {
+        List<EUClinical> newEuList = new ArrayList<>(euList);
+
+
+        for (EUClinical euClinical : euList) {
+            for (String otherId : otherIds) {
+                if (euClinical.getSponsorProtocolNumber().contains(otherId)) {
+                    newEuList.remove(euClinical);
+                }
+            }
+        }
+        return newEuList;
     }
 }
