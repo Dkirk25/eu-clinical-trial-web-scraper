@@ -1,0 +1,142 @@
+Study List:
+
+Study 1:
+  NCT Number:                   NCT02252770
+  Title:                        Nitric Oxide Supplementation in Argininosuccinic Aciduria
+  Acronym:                      
+  Status:                       Recruiting
+  Study Results:                No Results Available
+  Conditions:                   Argininosuccinic Aciduria|Argininosuccinate Lyase Deficiency|Urea Cycle Disorders
+  Interventions:                Dietary Supplement: Nitric oxide supplement|Dietary Supplement: Placebo
+  Outcome Measures:             Vascular endothelial function as assessed by FMD of brachial artery
+  Sponsor/Collaborators:        Baylor College of Medicine
+  Gender:                       All
+  Age:                          8 Years to 64 Years   (Child, Adult)
+  Phases:                       Not Applicable
+  Enrollment:                   12
+  Funded Bys:                   Other
+  Study Type:                   Interventional
+  Study Designs:                Allocation: Randomized|Intervention Model: Crossover Assignment|Masking: Triple (Participant, Care Provider, Investigator)|Primary Purpose: Treatment
+  Other IDs:                    H-33236
+  Start Date:                   September 2014
+  Primary Completion Date:      October 2018
+  Completion Date:              October 2018
+  First Posted:                 September 30, 2014
+  Results First Posted:         
+  Last Update Posted:           January 18, 2018
+  Locations:                    Texas Children's Hospital, Houston, Texas, United States
+  Study Documents:              
+  URL:                          https://ClinicalTrials.gov/show/NCT02252770
+
+Study 2:
+  NCT Number:                   NCT00345605
+  Title:                        Arginine and Buphenyl in Patients With Argininosuccinic Aciduria (ASA), a Urea Cycle Disorder
+  Acronym:                      
+  Status:                       Completed
+  Study Results:                Has Results
+  Conditions:                   Argininosuccinic Aciduria|Amino Acid Metabolism, Inborn Errors|Urea Cycle Disorders
+  Interventions:                Drug: Sodium Phenylbutyrate|Drug: Arginine
+  Outcome Measures:             Measures of Liver Function: AST and ALT|Measures of Liver Function: PT and PTT|Measures of Liver Function: Coagulation Factors|Measures of Liver Function: INR|Argininosuccinic Acid Levels|Arginine Levels|Urea Production Rate
+  Sponsor/Collaborators:        Brendan Lee|Office of Rare Diseases (ORD)|Rare Diseases Clinical Research Network|Eunice Kennedy Shriver National Institute of Child Health and Human Development (NICHD)|Baylor College of Medicine
+  Gender:                       All
+  Age:                          5 Years and older   (Child, Adult, Older Adult)
+  Phases:                       Phase 2
+  Enrollment:                   12
+  Funded Bys:                   Other|NIH
+  Study Type:                   Interventional
+  Study Designs:                Allocation: Randomized|Intervention Model: Crossover Assignment|Masking: Double (Participant, Investigator)|Primary Purpose: Treatment
+  Other IDs:                    RDCRN 5102|U54HD061221
+  Start Date:                   February 2008
+  Primary Completion Date:      May 2011
+  Completion Date:              November 2012
+  First Posted:                 June 28, 2006
+  Results First Posted:         November 5, 2014
+  Last Update Posted:           January 31, 2018
+  Locations:                    Baylor College of Medicine, Houston, Texas, United States
+  Study Documents:              
+  URL:                          https://ClinicalTrials.gov/show/NCT00345605
+
+Study 3:
+  NCT Number:                   NCT03064048
+  Title:                        Nitric Oxide Supplementation on Neurocognitive Functions in Patients With ASLD
+  Acronym:                      
+  Status:                       Recruiting
+  Study Results:                No Results Available
+  Conditions:                   Argininosuccinate Lyase Deficiency|Urea Cycle Disorder|Urea Cycle Disorders, Inborn|Argininosuccinic Aciduria
+  Interventions:                Dietary Supplement: Neo-ASA|Dietary Supplement: Placebo
+  Outcome Measures:             Delis-Kaplan Executive Function System - Tower subtest|Stanford-Binet - 4th Edition: Bead Memory and Sentence Memory subtests|Grip Strength|Grooved Pegboard|Wechsler Intelligence Scale for Children OR Wechsler Adult Intelligence Scale - 4th Edition (in subjects > 16 years of age)|Tower of London Test|Conners Continuous Performance Test - 3rd Edition Conners Continuous Performance Test - 3rd Edition
+  Sponsor/Collaborators:        Baylor College of Medicine|Rare Diseases Clinical Research Network|Neogenis Laboratories
+  Gender:                       All
+  Age:                          6 Years to 50 Years   (Child, Adult)
+  Phases:                       Not Applicable
+  Enrollment:                   16
+  Funded Bys:                   Other
+  Study Type:                   Interventional
+  Study Designs:                Allocation: Randomized|Intervention Model: Crossover Assignment|Masking: Triple (Participant, Care Provider, Investigator)|Primary Purpose: Treatment
+  Other IDs:                    H-40143
+  Start Date:                   September 15, 2017
+  Primary Completion Date:      January 31, 2020
+  Completion Date:              December 31, 2023
+  First Posted:                 February 24, 2017
+  Results First Posted:         
+  Last Update Posted:           January 18, 2018
+  Locations:                    Baylor College of Medicine, Houston, Texas, United States
+  Study Documents:              
+  URL:                          https://ClinicalTrials.gov/show/NCT03064048
+
+Study 4:
+  NCT Number:                   NCT01421888
+  Title:                        The NIH UNI Study: Urea Cycle Disorders, Nutrition and Immunity
+  Acronym:                      
+  Status:                       Terminated
+  Study Results:                No Results Available
+  Conditions:                   Argininosuccinic Aciduria|Carbamoyl-Phosphate Synthase I Deficiency|Citrullinemia|Ornithine Carbamoyltransferase Deficiency|Hyperargininemia|N-Acetylglutamate Synthase Deficiency
+  Interventions:                
+  Outcome Measures:             
+  Sponsor/Collaborators:        National Human Genome Research Institute (NHGRI)|National Institutes of Health Clinical Center (CC)
+  Gender:                       All
+  Age:                          2 Years to 99 Years   (Child, Adult, Older Adult)
+  Phases:                       
+  Enrollment:                   4
+  Funded Bys:                   NIH
+  Study Type:                   Observational
+  Study Designs:                Time Perspective: Prospective
+  Other IDs:                    110217|11-HG-0217
+  Start Date:                   August 8, 2011
+  Primary Completion Date:      
+  Completion Date:              April 17, 2013
+  First Posted:                 August 23, 2011
+  Results First Posted:         
+  Last Update Posted:           July 17, 2019
+  Locations:                    National Institutes of Health Clinical Center, 9000 Rockville Pike, Bethesda, Maryland, United States
+  Study Documents:              
+  URL:                          https://ClinicalTrials.gov/show/NCT01421888
+
+Study 5:
+  NCT Number:                   NCT01624311
+  Title:                        Pilot Study For Hypothermia Treatment In Hyperammonemic Encephalopathy In Neonates And Very Young Infants
+  Acronym:                      
+  Status:                       Completed
+  Study Results:                No Results Available
+  Conditions:                   Urea Cycle Disorders|Organic Acidemias
+  Interventions:                Other: Therapeutic Hypothermia|Other: Standard of Care Therapy
+  Outcome Measures:             Number of Participants with unexpected Serious Adverse Events as a Measure of Safety and Tolerability|Feasibility of hypothermia therapy as adjunct therapy to the complex standard of care therapy|Time to normalization of ammonia level
+  Sponsor/Collaborators:        Uta Lichter-Konecki|Children's Research Institute|Medical College of Wisconsin|Columbia University
+  Gender:                       All
+  Age:                          up to 30 Days   (Child)
+  Phases:                       Phase 2
+  Enrollment:                   5
+  Funded Bys:                   Other
+  Study Type:                   Interventional
+  Study Designs:                Allocation: Non-Randomized|Intervention Model: Single Group Assignment|Masking: None (Open Label)|Primary Purpose: Treatment
+  Other IDs:                    AAAN6104
+  Start Date:                   August 2007
+  Primary Completion Date:      May 2015
+  Completion Date:              May 2015
+  First Posted:                 June 20, 2012
+  Results First Posted:         
+  Last Update Posted:           June 1, 2015
+  Locations:                    Children's National Medical Center, Washington, District of Columbia, United States|Columbia University, Morgan Stanley Children's Hospital, New York, New York, United States|Medical College Wisconsin, Milwaukee, Wisconsin, United States
+  Study Documents:              
+  URL:                          https://ClinicalTrials.gov/show/NCT01624311
+
