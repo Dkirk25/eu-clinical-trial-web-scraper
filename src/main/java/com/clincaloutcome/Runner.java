@@ -56,10 +56,10 @@ public class Runner {
 
         if (crossRef.equalsIgnoreCase("y")) {
             System.out.println("Enter US Clinical Trial:");
-            String usTrail = "USTrials.xlsx";
+            String usTrail = sc.nextLine();
 
             System.out.println("Enter EU Clinical Trial:");
-            String euTrail = "EUList.xlsx";
+            String euTrail = sc.nextLine();
 
             List<EUClinical> newList = extractMatchesFromBothLists(usTrail, euTrail);
 

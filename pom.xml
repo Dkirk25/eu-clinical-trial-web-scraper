@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.donald</groupId>
-    <artifactId>clinical-trail-web-scrapper</artifactId>
-    <version>2.0-SNAPSHOT</version>
+    <artifactId>clinical-trial-web-application</artifactId>
+    <version>1.0</version>
 
     <dependencies>
         <dependency>
