@@ -1,0 +1,6 @@
+https://www.clinicaltrialsregister.eu/ctr-search/search?query=amyotrophic+lateral+sclerosis&age=adult&age=children&phase=phase-two&phase=phase-three&phase=phase-four&dateFrom=2010-01-01&dateTo=2021-01-01 3
+https://www.clinicaltrialsregister.eu/ctr-search/search?query=Duchenne+muscular+Dystrophy&age=adult&age=children&phase=phase-two&phase=phase-three&phase=phase-four&dateFrom=2010-01-01&dateTo=2021-01-01 3
+https://www.clinicaltrialsregister.eu/ctr-search/search?query=becker+Muscular+Dystrophy&age=adult&age=children&phase=phase-two&phase=phase-three&phase=phase-four&dateFrom=2010-01-01&dateTo=2021-01-01 1
+https://www.clinicaltrialsregister.eu/ctr-search/search?query=Muscular+Dystrophy&age=adult&age=children&phase=phase-two&phase=phase-three&phase=phase-four&dateFrom=2010-01-01&dateTo=2021-01-01 4
+https://www.clinicaltrialsregister.eu/ctr-search/search?query=myotonic+dystrophy+type+1&age=adult&age=children&phase=phase-two&phase=phase-three&phase=phase-four&dateFrom=2010-01-01&dateTo=2021-01-01 1
+https://www.clinicaltrialsregister.eu/ctr-search/search?query=cachexia&age=adult&age=children&phase=phase-two&phase=phase-three&phase=phase-four&dateFrom=2010-01-01&dateTo=2021-01-01 1
