@@ -1,62 +1,62 @@
 package com.clincaloutcome.model;
 
-import com.poiji.annotation.ExcelCellName;
+import com.poiji.annotation.ExcelCell;
 
 public class USClinical {
 
-    @ExcelCellName("Rank")
+    @ExcelCell(0)
     private String rank;
-    @ExcelCellName("NCT Number")
+    @ExcelCell(1)
     private String ntcNumber;
-    @ExcelCellName("Title")
+    @ExcelCell(2)
     private String title;
-    @ExcelCellName("Acronym")
+    @ExcelCell(3)
     private String acronym;
-    @ExcelCellName("Status")
+    @ExcelCell(4)
     private String status;
-    @ExcelCellName("Study Results")
+    @ExcelCell(5)
     private String studyResults;
-    @ExcelCellName("Condition")
+    @ExcelCell(6)
     private String condition;
-    @ExcelCellName("Intervention")
+    @ExcelCell(7)
     private String intervention;
-    @ExcelCellName("Outcome Measure")
+    @ExcelCell(8)
     private String outcomeMeasure;
-    @ExcelCellName("Sponsor/Collaborators")
+    @ExcelCell(9)
     private String sponsor;
-    @ExcelCellName("Gender")
+    @ExcelCell(10)
     private String gender;
-    @ExcelCellName("Age")
+    @ExcelCell(11)
     private String age;
-    @ExcelCellName("Phases")
+    @ExcelCell(12)
     private String phases;
-    @ExcelCellName("Enrollment")
+    @ExcelCell(13)
     private String enrollment;
-    @ExcelCellName("Funded Bys")
+    @ExcelCell(14)
     private String fundedBy;
-    @ExcelCellName("Study Type")
+    @ExcelCell(15)
     private String studyType;
-    @ExcelCellName("Study Design")
+    @ExcelCell(16)
     private String studyDesign;
-    @ExcelCellName("Other IDs")
+    @ExcelCell(17)
     private String otherId;
-    @ExcelCellName("Start Date")
+    @ExcelCell(18)
     private String startDate;
-    @ExcelCellName("Primary Completion Date")
+    @ExcelCell(19)
     private String primaryCompletionDate;
-    @ExcelCellName("Completion Date")
+    @ExcelCell(20)
     private String completionDate;
-    @ExcelCellName("First Posted")
+    @ExcelCell(21)
     private String firstPosted;
-    @ExcelCellName("Results First Posted")
+    @ExcelCell(22)
     private String resultFirstPosted;
-    @ExcelCellName("Last Update Posted")
+    @ExcelCell(23)
     private String lastUpdatePosted;
-    @ExcelCellName("Locations")
+    @ExcelCell(24)
     private String locations;
-    @ExcelCellName("Study Documents")
+    @ExcelCell(25)
     private String studyDocuments;
-    @ExcelCellName("URL")
+    @ExcelCell(26)
     private String url;
 
     public String getRank() {
