@@ -5,17 +5,21 @@ import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 public class WebBuilder {
+    private static final Logger LOGGER = LoggerFactory.getLogger(WebBuilder.class);
 
-    private ExcelBuilder excelBuilder;
+    private ExcelBuilder excelBuilder = new ExcelBuilder();
 
     public void singleBuilder(final String url, final String pages) {
         iterateThroughUrlAndPage(url, pages);
@@ -23,15 +27,11 @@ public class WebBuilder {
     }
 
     public void bulkBuilder(final String file) {
-        excelBuilder = new ExcelBuilder();
-
-        createUsingBulkFile(file);
-        excelBuilder.printFromEUTrialExcelFile();
+            createUsingBulkFile(file);
+            excelBuilder.printFromEUTrialExcelFile();
     }
 
     public void crossBuilder(final String usTrialFile, final String euTrialFile) {
-        excelBuilder = new ExcelBuilder();
-
         List<EUClinical> euList = excelBuilder.extractMatchesFromBothLists(usTrialFile, euTrialFile);
         excelBuilder.printEUListToExcel(euList);
     }
@@ -53,34 +53,52 @@ public class WebBuilder {
                 }
 
             } catch (IOException e) {
-                System.out.println("Cannot Parse Website!");
+                LOGGER.error("Cannot Parse Website!");
             }
         } else {
-            System.out.println("Url or Page Number is empty!");
+            LOGGER.error("Url or Page Number is empty!");
         }
     }
 
     private void createUsingBulkFile(String bulk) {
         List<String> fileLines = new ArrayList<>();
 
-        if (bulk.length() > 0 && bulk.endsWith(".txt")) {
+        try (Stream<String> files = Files.lines(Paths.get(bulk))) {
+            files.forEach(fileLines::add);
 
-            try (Stream<String> files = Files.lines(Paths.get(bulk))) {
-                files.forEach(fileLines::add);
+            AtomicInteger i = new AtomicInteger(1);
+            fileLines.forEach(fileLine -> {
+                progressPercentage(i.get(), fileLines.size());
+                String[] line = fileLine.split(" ");
+                String bulkUrl = line[0];
+                String bulkPage = line[1];
+                i.set(i.get() + 1);
+                iterateThroughUrlAndPage(bulkUrl, bulkPage);
 
-                fileLines.forEach(fileLine -> {
-                    String[] line = fileLine.split(" ");
-                    String bulkUrl = line[0];
-                    String bulkPage = line[1];
+            });
+        } catch (IOException e) {
+            LOGGER.error("Can't Read File.");
+        }
+    }
 
-                    iterateThroughUrlAndPage(bulkUrl, bulkPage);
-                });
-            } catch (IOException e) {
-                System.out.println("Can't Read File.");
-            }
-        } else {
-            System.out.println("File type must end with .txt");
-            System.exit(0);
+    private void progressPercentage(int remain, int total) {
+        if (remain > total) {
+            throw new IllegalArgumentException();
+        }
+        int maxBareSize = 10; // 10unit for 100%
+        int remainProcent = ((100 * remain) / total) / maxBareSize;
+        char defaultChar = '-';
+        String icon = "*";
+        String bare = new String(new char[maxBareSize]).replace('\0', defaultChar) + "]";
+        StringBuilder bareDone = new StringBuilder();
+        bareDone.append("[");
+        for (int i = 0; i < remainProcent; i++) {
+            bareDone.append(icon);
+        }
+        String bareRemain = bare.substring(remainProcent, bare.length());
+        System.out.print("\r" + bareDone + bareRemain + " " + remainProcent * 10 + "%");
+        if (remain == total) {
+            System.out.print("\n");
         }
     }
 }

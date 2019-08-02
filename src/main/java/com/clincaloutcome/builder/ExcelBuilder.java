@@ -10,6 +10,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.io.File;
@@ -17,12 +19,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toCollection;
 
 class ExcelBuilder {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExcelBuilder.class);
 
     private Utils utility = new Utils();
 
@@ -74,18 +76,20 @@ class ExcelBuilder {
                 listOfGenders.add(utility.wordParser(number.text()));
             }
             if (number.text().contains("Trial protocol:")) {
-                String protocol = utility.wordParser(number.text());
-                listOfTrailProtocols.add(protocol);
-
-                String firstProtocol = getProtocolType(protocol);
-
-                // Go into link and save endpoints.
-                connectAndGrabEndPoints(eudraCT, firstProtocol);
+                handleTrialProtocol(eudraCT, number);
             }
             if (number.text().contains("Trial results:")) {
                 listOfTrailResults.add(utility.wordParser(number.text()));
             }
         }
+    }
+
+    private void handleTrialProtocol(String eudraCT, Element number) {
+        String protocol = utility.wordParser(number.text());
+        listOfTrailProtocols.add(protocol);
+        String firstProtocol = getProtocolType(protocol);
+        // Go into link and save endpoints.
+        connectAndGrabEndPoints(eudraCT, firstProtocol);
     }
 
     private String getProtocolType(String protocol) {
@@ -100,7 +104,7 @@ class ExcelBuilder {
 
     void printFromEUTrialExcelFile() {
         String[] columns = {"EudraCT Number", "Sponsor Protocol Number", "Start Date", "Sponsor Name", "Full Title", "Medical Condition", "Disease", "Population Age", "Gender", "Trial Protocol", "Trial Results", "Primary End Points", "Secondary End Points"};
-        String outputFile = "../EUClinicalTrails.xlsx";
+        String outputFile = "./EUClinicalTrails.xlsx";
 
         try (Workbook workbook = new XSSFWorkbook()) {
 
@@ -152,7 +156,7 @@ class ExcelBuilder {
             fileOut.close();
 
         } catch (IOException e) {
-            System.out.println("Can't Parse File.");
+            LOGGER.error("Can't Parse File {}", e.getMessage());
         }
         autoOpenExcel(outputFile);
     }
@@ -209,7 +213,7 @@ class ExcelBuilder {
             listOfSecondaryEndPoints.add(utility.trailParser(secondary.get(0), secondaryEndpoint));
 
         } catch (IOException e) {
-            System.out.println("Bad url for primary and secondary endpoints.");
+            LOGGER.error("Bad url for primary and secondary endpoints.");
         }
     }
 
@@ -222,12 +226,7 @@ class ExcelBuilder {
         // Take list of US Clinical CSV file
         List<USClinical> usClinicalList = readExcelFile(usFile, USClinical.class);
 
-        List<USClinical> usListWithoutDuplicates = usClinicalList.stream()
-                .collect(collectingAndThen(toCollection(() ->
-                                new TreeSet<>(
-                                        Comparator.comparing(USClinical::getOtherId,
-                                                Comparator.nullsFirst(Comparator.naturalOrder())))),
-                        ArrayList::new));
+        List<USClinical> usListWithoutDuplicates = getListWithoutDuplicates(usClinicalList);
 
         // Take list of EU Clinical excel file
         List<EUClinical> euClinicalList = readExcelFile(euFile, EUClinical.class);
@@ -239,28 +238,32 @@ class ExcelBuilder {
                                                 Comparator.nullsFirst(Comparator.naturalOrder())))),
                         ArrayList::new));
 
-        // then create new list
-        Set<String> getOtherIds = usListWithoutDuplicates.stream()
-                .map(USClinical::getOtherId)
-                .collect(Collectors.toSet());
-
-        return removeUSProtocolsFromEUList(distinctEUList1, getOtherIds);
+        return removeUSProtocolsFromEUList(distinctEUList1, usListWithoutDuplicates);
     }
 
-    private List<EUClinical> removeUSProtocolsFromEUList(List<EUClinical> euList, Set<String> otherIds) {
+    private ArrayList<USClinical> getListWithoutDuplicates(List<USClinical> usClinicalList) {
+        return usClinicalList.stream()
+                .collect(collectingAndThen(toCollection(() ->
+                                new TreeSet<>(
+                                        Comparator.comparing(USClinical::getOtherId,
+                                                Comparator.nullsFirst(Comparator.naturalOrder())))),
+                        ArrayList::new));
+    }
+
+    private List<EUClinical> removeUSProtocolsFromEUList(List<EUClinical> euList, List<USClinical> usList) {
         List<EUClinical> newEuList = new ArrayList<>(euList);
 
         for (EUClinical euClinical : euList) {
-            for (String otherId : otherIds) {
-                if (otherId.contains("|")) {
-                    String[] words = otherId.split("\\|");
+            for (USClinical otherId : usList) {
+                if (otherId.getOtherId().contains("|")) {
+                    String[] words = otherId.getOtherId().split("\\|");
                     List<String> wordArrayList = new ArrayList<>(Arrays.asList(words));
                     for (String word : wordArrayList) {
                         if (word.equalsIgnoreCase(euClinical.getSponsorProtocolNumber())) {
                             newEuList.remove(euClinical);
                         }
                     }
-                } else if (otherId.equalsIgnoreCase(euClinical.getSponsorProtocolNumber())) {
+                } else if (otherId.getOtherId().equalsIgnoreCase(euClinical.getSponsorProtocolNumber())) {
                     newEuList.remove(euClinical);
                 }
             }
@@ -323,7 +326,7 @@ class ExcelBuilder {
             fileOut.close();
 
         } catch (IOException e) {
-            System.out.println("Can't Parse File.");
+            LOGGER.error("Can't Parse File.");
         }
         autoOpenExcel(outputFile);
     }
@@ -332,7 +335,7 @@ class ExcelBuilder {
         try {
             Desktop.getDesktop().open(new File(outputFile));
         } catch (IOException e) {
-            System.out.println("Can't AutoOpen Excel File.");
+            LOGGER.error("Can't AutoOpen Excel File.");
         }
     }
 }

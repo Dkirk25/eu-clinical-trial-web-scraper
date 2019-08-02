@@ -17,4 +17,8 @@ public class Utils {
         word = word.replaceAll("\\*", "");
         return word.trim();
     }
+
+    public boolean isValidFileFormat(String file, String fileType) {
+        return !file.isEmpty() && file.endsWith(fileType);
+    }
 }
