@@ -27,8 +27,8 @@ public class WebBuilder {
     }
 
     public void bulkBuilder(final String file) {
-            createUsingBulkFile(file);
-            excelBuilder.printFromEUTrialExcelFile();
+        createUsingBulkFile(file);
+        excelBuilder.printFromEUTrialExcelFile();
     }
 
     public void crossBuilder(final String usTrialFile, final String euTrialFile) {
@@ -66,14 +66,14 @@ public class WebBuilder {
         try (Stream<String> files = Files.lines(Paths.get(bulk))) {
             files.forEach(fileLines::add);
 
-            AtomicInteger i = new AtomicInteger(1);
+            AtomicInteger i = new AtomicInteger(0);
             fileLines.forEach(fileLine -> {
-                progressPercentage(i.get(), fileLines.size());
                 String[] line = fileLine.split(" ");
                 String bulkUrl = line[0];
                 String bulkPage = line[1];
-                i.set(i.get() + 1);
+                progressPercentage(i.get(), fileLines.size());
                 iterateThroughUrlAndPage(bulkUrl, bulkPage);
+                i.set(i.get() + 1);
 
             });
         } catch (IOException e) {
@@ -86,17 +86,17 @@ public class WebBuilder {
             throw new IllegalArgumentException();
         }
         int maxBareSize = 10; // 10unit for 100%
-        int remainProcent = ((100 * remain) / total) / maxBareSize;
+        int remainPercent = ((100 * remain) / total) / maxBareSize;
         char defaultChar = '-';
         String icon = "*";
         String bare = new String(new char[maxBareSize]).replace('\0', defaultChar) + "]";
         StringBuilder bareDone = new StringBuilder();
         bareDone.append("[");
-        for (int i = 0; i < remainProcent; i++) {
+        for (int i = 0; i < remainPercent; i++) {
             bareDone.append(icon);
         }
-        String bareRemain = bare.substring(remainProcent, bare.length());
-        System.out.print("\r" + bareDone + bareRemain + " " + remainProcent * 10 + "%");
+        String bareRemain = bare.substring(remainPercent);
+        System.out.print("\r" + bareDone + bareRemain + " " + remainPercent * 10 + "%");
         if (remain == total) {
             System.out.print("\n");
         }
