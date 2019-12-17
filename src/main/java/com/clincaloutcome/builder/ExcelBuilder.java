@@ -44,8 +44,8 @@ class ExcelBuilder {
 
 
     void buildEUListFromWebResults(Elements eudraCTNumber) {
-        String eudraCT = "";
         for (Element number : eudraCTNumber) {
+            String eudraCT = "";
 
             if (number.text().contains("EudraCT Number:")) {
                 eudraCT = utility.wordParser(number.text());

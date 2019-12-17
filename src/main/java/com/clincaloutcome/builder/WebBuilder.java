@@ -51,7 +51,6 @@ public class WebBuilder {
                     }
                     i++;
                 }
-
             } catch (IOException e) {
                 LOGGER.error("Cannot Parse Website!");
             }
