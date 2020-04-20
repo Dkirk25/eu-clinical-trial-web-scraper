@@ -2,7 +2,6 @@ package com.clincaloutcome.builder;
 
 import com.clincaloutcome.model.EUClinical;
 import org.apache.commons.lang3.StringUtils;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
@@ -17,6 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 import static sun.net.www.protocol.http.HttpURLConnection.userAgent;
+
 
 public class WebBuilder {
     private static final Logger LOGGER = LoggerFactory.getLogger(WebBuilder.class);
@@ -45,7 +45,7 @@ public class WebBuilder {
                 int pageCount = Integer.parseInt(pages);
                 while (i <= pageCount) {
                     Document doc;
-                    doc = Jsoup.connect(url + "&page=" + i).userAgent(userAgent).ignoreHttpErrors(true).get();
+                    doc = SSLHelper.getConnection(url + "&page=" + i).userAgent(userAgent).ignoreHttpErrors(true).get();
 
                     if (doc != null) {
                         Elements eudraCTNumber = doc.select("div.results.grid_8plus > table > tbody > tr > td");

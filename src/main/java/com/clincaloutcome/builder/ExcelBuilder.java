@@ -6,7 +6,6 @@ import com.poiji.bind.Poiji;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -44,11 +43,13 @@ class ExcelBuilder {
 
 
     void buildEUListFromWebResults(Elements eudraCTNumber) {
+        String mainEudraCT = "";
         for (Element number : eudraCTNumber) {
-            String eudraCT = "";
+            String eudraCT;
 
             if (number.text().contains("EudraCT Number:")) {
                 eudraCT = utility.wordParser(number.text());
+                mainEudraCT = eudraCT;
                 listOfEudra.add(eudraCT);
             }
             if (number.text().contains("Sponsor Protocol Number:")) {
@@ -76,7 +77,7 @@ class ExcelBuilder {
                 listOfGenders.add(utility.wordParser(number.text()));
             }
             if (number.text().contains("Trial protocol:")) {
-                handleTrialProtocol(eudraCT, number);
+                handleTrialProtocol(mainEudraCT, number);
             }
             if (number.text().contains("Trial results:")) {
                 listOfTrailResults.add(utility.wordParser(number.text()));
@@ -177,7 +178,7 @@ class ExcelBuilder {
         String url = "https://www.clinicaltrialsregister.eu/ctr-search/trial/" + eudraCT + "/" + firstProtocol;
 
         try {
-            doc2 = Jsoup.connect(url).get();
+            doc2 = SSLHelper.getConnection(url).get();
 
             Elements endPoints = doc2.select("#section-e > tbody > tr");
 
