@@ -12,32 +12,32 @@ import java.util.Scanner;
 public class Runner {
     private static final Logger LOGGER = LoggerFactory.getLogger(Runner.class);
 
-    public static void main(String[] args) {
-        BasicConfigurator.configure();
-        WebBuilder webBuilder = new WebBuilder();
-
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Trying to cross reference two files? (y)es or (n)o:");
-        String crossRef = sc.nextLine();
-
-        if (crossRef.equalsIgnoreCase("y")) {
-            executeCrossReference(sc, webBuilder);
-        } else {
-            System.out.println("Upload a txt File? (y)es or (n)o: ");
-            String f = sc.nextLine();
-
-            if (f.equalsIgnoreCase("y")) {
-                executeBulkSearch(sc, webBuilder);
-            } else {
-                System.out.println("Use Single Search? (y)es or (n)o: ");
-                String single = sc.nextLine();
-
-                if (single.equalsIgnoreCase("y")) {
-                    executeSingleSearch(sc, webBuilder);
-                }
-            }
-        }
-    }
+//    public static void main(String[] args) {
+//        BasicConfigurator.configure();
+//        WebBuilder webBuilder = new WebBuilder();
+//
+//        Scanner sc = new Scanner(System.in);
+//        System.out.println("Trying to cross reference two files? (y)es or (n)o:");
+//        String crossRef = sc.nextLine();
+//
+//        if (crossRef.equalsIgnoreCase("y")) {
+//            executeCrossReference(sc, webBuilder);
+//        } else {
+//            System.out.println("Upload a txt File? (y)es or (n)o: ");
+//            String f = sc.nextLine();
+//
+//            if (f.equalsIgnoreCase("y")) {
+//                executeBulkSearch(sc, webBuilder);
+//            } else {
+//                System.out.println("Use Single Search? (y)es or (n)o: ");
+//                String single = sc.nextLine();
+//
+//                if (single.equalsIgnoreCase("y")) {
+//                    executeSingleSearch(sc, webBuilder);
+//                }
+//            }
+//        }
+//    }
 
     private static void executeSingleSearch(Scanner sc, WebBuilder webBuilder) {
         System.out.println("Enter Url: ");
