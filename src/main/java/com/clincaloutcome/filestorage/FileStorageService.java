@@ -1,4 +1,4 @@
-package com.clincaloutcome.fileStorage;
+package com.clincaloutcome.filestorage;
 
 import com.clincaloutcome.exception.FileStorageException;
 import com.clincaloutcome.exception.MyFileNotFoundException;

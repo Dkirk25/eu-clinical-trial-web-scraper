@@ -1,4 +1,4 @@
-package com.clincaloutcome.fileStorage;
+package com.clincaloutcome.filestorage;
 
 public class UploadFileResponse {
     private String fileName;

@@ -6,14 +6,13 @@ let singleFileUploadError = document.querySelector('#singleFileUploadError');
 let singleFileUploadSuccess = document.querySelector('#singleFileUploadSuccess');
 
 let singleSearchForm = document.querySelector('#singleSearchForm');
-let singleSearchFormInput = document.querySelector('#singleSearchFormInput');
+let singleSearchFormInput = document.getElementById("singleSearchFormInput").value;
 let pageNumberInput = document.querySelector('#pageNumberInput');
 
 let multipleUploadForm = document.querySelector('#multipleUploadForm');
 let multipleFileUploadInput = document.querySelector('#multipleFileUploadInput');
 let multipleFileUploadError = document.querySelector('#multipleFileUploadError');
 let multipleFileUploadSuccess = document.querySelector('#multipleFileUploadSuccess');
-
 
 function submitSingleSearch(searchQuery, pageNumber) {
     let formData = new FormData();
@@ -90,21 +89,57 @@ function uploadMultipleFiles(files) {
     xhr.send(formData);
 }
 
+(function () {
+    // window.addEventListener('load', function () {
+    //     var element = document.getElementById("singleFileUploadSuccess").value;
+    //
+    //     var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
+    //     var observer = new MutationObserver(myFunction);
+    //     observer.observe(element, {
+    //         childList: true
+    //     });
+    //
+    //     function myFunction() {
+    //         console.log(element);
+    //         if(element === ""){
+    //             console.log("please load");
+    //         }else{
+    //             console.log("DO NOT LOAD")
+    //         }
+    //     }
+    // });
 
-singleSearchForm.addEventListener('submit', function (event) {
-    let searchQuery = singleSearchFormInput.searchQuery;
-    let pageNumber = pageNumberInput.pageNumber;
-    if (searchQuery.length === 0) {
-        singleFileUploadError.innerHTML = "Please fill out url";
-        singleFileUploadError.style.display = "block";
-    }
-    if (pageNumber.length === 0) {
-        singleFileUploadError.innerHTML = "Please fill out page number";
-        singleFileUploadError.style.display = "block";
-    }
-    submitSingleSearch(searchQuery, pageNumber);
-    event.preventDefault();
-}, true);
+    singleSearchForm.addEventListener('submit', function (event) {
+        let searchQuery = document.getElementById("singleSearchFormInput").value;
+        let pageNumber = document.getElementById("pageNumberInput").value;
+
+        if (searchQuery.length === 0) {
+            singleFileUploadError.innerHTML = "Please fill out the url field";
+            singleFileUploadError.style.display = "block";
+        }
+        if(pageNumber.length === 0 && !pageNumber.numeric){
+            singleFileUploadError.innerHTML = "Please enter page number fields";
+            singleFileUploadError.style.display = "block";
+        }
+
+        submitSingleSearch(searchQuery, pageNumber);
+        event.preventDefault();
+    });
+
+
+    multipleUploadForm.addEventListener('submit', function (event) {
+        let files = multipleFileUploadInput.files;
+        if (files.length === 0) {
+            multipleFileUploadError.innerHTML = "Please select at least one file";
+            multipleFileUploadError.style.display = "block";
+        }
+        uploadMultipleFiles(files);
+        event.preventDefault();
+    });
+
+    console.log('Script Loaded');
+})();
+
 
 // singleUploadForm.addEventListener('submit', function (event) {
 //     let files = singleFileUploadInput.files;
@@ -113,16 +148,5 @@ singleSearchForm.addEventListener('submit', function (event) {
 //         singleFileUploadError.style.display = "block";
 //     }
 //     uploadSingleFile(files[0]);
-//     event.preventDefault();
-// }, true);
-
-
-// multipleUploadForm.addEventListener('submit', function (event) {
-//     let files = multipleFileUploadInput.files;
-//     if (files.length === 0) {
-//         multipleFileUploadError.innerHTML = "Please select at least one file";
-//         multipleFileUploadError.style.display = "block";
-//     }
-//     uploadMultipleFiles(files);
 //     event.preventDefault();
 // }, true);

@@ -1,4 +1,4 @@
-package com.clincaloutcome.fileStorage;
+package com.clincaloutcome.filestorage;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

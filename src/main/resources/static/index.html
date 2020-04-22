@@ -2,13 +2,14 @@
 <html lang="En">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-    <title>Golf Scorecard Converter</title>
+    <title>Clinical Trial Converter</title>
     <link rel="stylesheet" href="/css/main.css"/>
 </head>
 <body>
 <noscript>
     <h2>Sorry! Your browser doesn't support Javascript</h2>
 </noscript>
+
 <div class="upload-container">
     <div class="upload-header">
         <h2>Clinical Trial Converter</h2>
@@ -18,34 +19,81 @@
         <div class="single-upload">
             <h3>Single Search</h3>
             <form id="singleSearchForm" name="singleSearchForm">
-                <label for="singleSearchFormInput">Url:</label><input id="singleSearchFormInput" type="text"
-                                                                      name="searchQuery" class="file-input" required/>
-                <label for="pageNumberInput">Page:</label><input id="pageNumberInput" type="text" name="pageNumber"
-                                                                 class="file-input" required/>
+                <div class="row" style="padding-bottom: 10px">
+                    <div class="col-md-10"><p style="text-align: left">Url:</p>
+                        <input id="singleSearchFormInput" type="text"
+                               name="searchQuery" class="file-input" style="width: 75%"
+                               required/>
+                    </div>
+                    <div class="col-md-2">
+                        <p style="text-align: left">Page:</p>
+                        <input id="pageNumberInput" type="text" name="pageNumber"
+                               class="file-input" style="width: 10%" required/>
+                    </div>
+                </div>
                 <button type="submit" class="primary submit-btn">
                     Submit
                 </button>
             </form>
             <div class="upload-response">
+                <div class="preloader">
+                    <img src="/spinner.svg" alt="spinner">
+                </div>
                 <div id="singleFileUploadError"></div>
                 <div id="singleFileUploadSuccess"></div>
             </div>
         </div>
 
-
-<!--        <div class="multiple-upload">-->
-<!--            <h3>Upload Multiple Files</h3>-->
-<!--            <form id="multipleUploadForm" name="multipleUploadForm">-->
-<!--                <input id="multipleFileUploadInput" type="file" name="files" class="file-input" multiple required/>-->
-<!--                <button type="submit" class="primary submit-btn">Submit</button>-->
-<!--            </form>-->
-<!--            <div class="upload-response">-->
-<!--                <div id="multipleFileUploadError"></div>-->
-<!--                <div id="multipleFileUploadSuccess"></div>-->
-<!--            </div>-->
-<!--        </div>-->
+        <div class="multiple-upload">
+            <h3>Upload Multiple Files</h3>
+            <form id="multipleUploadForm" name="multipleUploadForm">
+                <input id="multipleFileUploadInput" type="file" name="files" class="file-input" multiple required/>
+                <button type="submit" class="primary submit-btn">Submit</button>
+            </form>
+            <div class="upload-response">
+                <div id="multipleFileUploadError"></div>
+                <div id="multipleFileUploadSuccess"></div>
+            </div>
+        </div>
     </div>
 </div>
 <script src="/js/main.js"></script>
 </body>
+
+<style>
+    /* Center the loader */
+    .preloader {
+        align-items: center;
+        background: rgb(23, 22, 22);
+        display: flex;
+        height: 100vh;
+        justify-content: center;
+        left: 0;
+        position: fixed;
+        top: 0;
+        transition: opacity 0.3s linear;
+        width: 100%;
+        z-index: 9999;
+    }
+</style>
+
+<script>
+    const preloader = document.querySelector('.preloader');
+
+    const fadeEffect = setInterval(() => {
+        // if we don't set opacity 1 in CSS, then   //it will be equaled to "", that's why we   // check it
+        if (!preloader.style.opacity) {
+            preloader.style.opacity = 1;
+        }
+        if (preloader.style.opacity > 0) {
+            preloader.style.opacity -= 0.1;
+        } else {
+            clearInterval(fadeEffect);
+        }
+    }, 200);
+
+    window.addEventListener('load', fadeEffect);
+</script>
+
+
 </html>

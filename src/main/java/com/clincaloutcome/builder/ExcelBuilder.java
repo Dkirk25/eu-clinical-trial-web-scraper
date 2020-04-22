@@ -152,14 +152,13 @@ class ExcelBuilder {
             }
 
             // Write the output to a file
-            FileOutputStream fileOut = new FileOutputStream(outputFile);
+            FileOutputStream fileOut = new FileOutputStream("uploads/"+outputFile);
             workbook.write(fileOut);
             fileOut.close();
-
         } catch (IOException e) {
             LOGGER.error("Can't Parse File {}", e.getMessage());
         }
-        autoOpenExcel(outputFile);
+       // autoOpenExcel(outputFile);
     }
 
     private void createExcelHeaders(String[] columns, CellStyle headerCellStyle, Sheet sheet) {
