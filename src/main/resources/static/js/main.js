@@ -14,7 +14,25 @@ let multipleFileUploadInput = document.querySelector('#multipleFileUploadInput')
 let multipleFileUploadError = document.querySelector('#multipleFileUploadError');
 let multipleFileUploadSuccess = document.querySelector('#multipleFileUploadSuccess');
 
+const preloader = document.querySelector('.preloader');
+
+function isLoading() {
+    preloader.classList.remove('preloader-exited');
+    preloader.classList.add('preloader-active');
+}
+
+function doneLoading() {
+    preloader.classList.add('preloader-exiting');
+    preloader.classList.remove(('preloader-active'));
+
+    setTimeout(function () {
+        preloader.classList.remove('preloader-exiting');
+        preloader.classList.add('preloader-exited');
+    }, 2000)
+}
+
 function submitSingleSearch(searchQuery, pageNumber) {
+    isLoading();
     let formData = new FormData();
     formData.append("searchQuery", searchQuery);
     formData.append("pageNumber", pageNumber);
@@ -33,6 +51,15 @@ function submitSingleSearch(searchQuery, pageNumber) {
             singleFileUploadSuccess.style.display = "none";
             singleFileUploadError.innerHTML = (response && response.message) || "Some Error Occurred";
         }
+        doneLoading();
+    };
+
+    xhr.onerror = function () {
+        doneLoading();
+    };
+
+    xhr.onabort = function () {
+        doneLoading();
     };
     xhr.send(formData);
 }
@@ -90,40 +117,22 @@ function uploadMultipleFiles(files) {
 }
 
 (function () {
-    // window.addEventListener('load', function () {
-    //     var element = document.getElementById("singleFileUploadSuccess").value;
-    //
-    //     var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
-    //     var observer = new MutationObserver(myFunction);
-    //     observer.observe(element, {
-    //         childList: true
-    //     });
-    //
-    //     function myFunction() {
-    //         console.log(element);
-    //         if(element === ""){
-    //             console.log("please load");
-    //         }else{
-    //             console.log("DO NOT LOAD")
-    //         }
-    //     }
-    // });
-
     singleSearchForm.addEventListener('submit', function (event) {
-        let searchQuery = document.getElementById("singleSearchFormInput").value;
-        let pageNumber = document.getElementById("pageNumberInput").value;
+        event.preventDefault();
+
+        const searchQuery = document.getElementById("singleSearchFormInput").value;
+        const pageNumber = document.getElementById("pageNumberInput").value;
 
         if (searchQuery.length === 0) {
             singleFileUploadError.innerHTML = "Please fill out the url field";
             singleFileUploadError.style.display = "block";
         }
-        if(pageNumber.length === 0 && !pageNumber.numeric){
+        if (pageNumber.length === 0 && !pageNumber.numeric) {
             singleFileUploadError.innerHTML = "Please enter page number fields";
             singleFileUploadError.style.display = "block";
         }
 
         submitSingleSearch(searchQuery, pageNumber);
-        event.preventDefault();
     });
 
 

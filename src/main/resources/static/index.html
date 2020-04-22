@@ -3,7 +3,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
     <title>Clinical Trial Converter</title>
-    <link rel="stylesheet" href="/css/main.css"/>
+    <link rel="stylesheet" href="./css/main.css"/>
 </head>
 <body>
 <noscript>
@@ -36,8 +36,8 @@
                 </button>
             </form>
             <div class="upload-response">
-                <div class="preloader">
-                    <img src="/spinner.svg" alt="spinner">
+                <div class="preloader preloader-exited">
+                    <img src="./spinner.svg" alt="spinner">
                 </div>
                 <div id="singleFileUploadError"></div>
                 <div id="singleFileUploadSuccess"></div>
@@ -57,7 +57,7 @@
         </div>
     </div>
 </div>
-<script src="/js/main.js"></script>
+<script src="./js/main.js"></script>
 </body>
 
 <style>
@@ -65,35 +65,33 @@
     .preloader {
         align-items: center;
         background: rgb(23, 22, 22);
+        bottom: 0;
         display: flex;
         height: 100vh;
         justify-content: center;
         left: 0;
         position: fixed;
+        right: 0;
         top: 0;
-        transition: opacity 0.3s linear;
-        width: 100%;
+        transition: opacity 0.3s ease;
+        width: 100vw;
         z-index: 9999;
     }
+
+    .preloader-active {
+        display: flex;
+        opacity: 0.5;
+    }
+
+    .preloader-exiting {
+        opacity: 0;
+    }
+
+    .preloader-exited {
+        display: none;
+        opacity: 0;
+    }
 </style>
-
-<script>
-    const preloader = document.querySelector('.preloader');
-
-    const fadeEffect = setInterval(() => {
-        // if we don't set opacity 1 in CSS, then   //it will be equaled to "", that's why we   // check it
-        if (!preloader.style.opacity) {
-            preloader.style.opacity = 1;
-        }
-        if (preloader.style.opacity > 0) {
-            preloader.style.opacity -= 0.1;
-        } else {
-            clearInterval(fadeEffect);
-        }
-    }, 200);
-
-    window.addEventListener('load', fadeEffect);
-</script>
 
 
 </html>
