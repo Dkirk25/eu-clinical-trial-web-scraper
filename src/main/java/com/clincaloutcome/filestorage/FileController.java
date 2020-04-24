@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 @RestController
 public class FileController {
-    private static final Logger logger = LoggerFactory.getLogger(FileController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileController.class);
 
     @Autowired
     private FileStorageService fileStorageService;
@@ -29,16 +29,10 @@ public class FileController {
     @Autowired
     private WebBuilder webBuilder;
 
-
     @PostMapping("/uploadSearchQuery")
     public UploadFileResponse submitSearchQuery(@RequestParam("searchQuery") String searchQuery, @RequestParam("pageNumber") String pageNumber) throws IOException {
-        System.out.println("Url: " + searchQuery);
-        System.out.println("Page Number: " + pageNumber);
-
         webBuilder.singleBuilder(searchQuery, pageNumber);
-        File file = new File("/Users/donald/Development/Java/eu-clinical-web-scrapper/uploads/EUClinicalTrails.xlsx");
-        InputStream stream =  new FileInputStream(file);
-        MultipartFile multipartFileToSend = new MockMultipartFile("EUClinicalTrails", file.getName(), MediaType.ALL_VALUE, stream);
+        MultipartFile multipartFileToSend = getMultipartFile();
         String fileName = fileStorageService.storeFile(multipartFileToSend);
 
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -46,29 +40,41 @@ public class FileController {
                 .path(fileName)
                 .toUriString();
 
-        return new UploadFileResponse("Clinical", fileDownloadUri);
+        return new UploadFileResponse(fileName, fileDownloadUri, multipartFileToSend.getContentType(), multipartFileToSend.getSize());
     }
 
-//    protected Scorecard convertExcelToScorecard(String excel) {
-//        return excelReader.readFile(excel);
-//    }
+    private MultipartFile getMultipartFile() throws IOException {
+        File file = new File("./uploads/EUClinicalTrails.xlsx");
+        InputStream stream = new FileInputStream(file);
+        return new MockMultipartFile("EUClinicalTrails", file.getName(), MediaType.ALL_VALUE, stream);
+    }
+
+    public static File convert(MultipartFile file) throws IOException {
+        File convFile = new File(file.getOriginalFilename());
+        convFile.createNewFile();
+        FileOutputStream fos = new FileOutputStream(convFile);
+        fos.write(file.getBytes());
+        fos.close();
+        return convFile;
+    }
 
     @PostMapping("/uploadFile")
-    public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file) {
-        String fileName = fileStorageService.storeFile(file);
+    public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile bulk) {
+        try {
+            webBuilder.bulkBuilder(convert(bulk));
+            MultipartFile multipartFileToSend = getMultipartFile();
+            String fileName = fileStorageService.storeFile(multipartFileToSend);
 
-//        Scorecard scorecard = convertExcelToScorecard(fileName);
-//
-//        scorecard = scorecardService.balanceScoreCard(scorecard);
-//        String newFile = excelWriter.createNewExcelFile(scorecard);
+            String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                    .path("/downloadFile/")
+                    .path(fileName)
+                    .toUriString();
 
-        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/downloadFile/")
-                .path(String.valueOf(file))
-                .toUriString();
-
-        return new UploadFileResponse(fileName, fileDownloadUri,
-                file.getContentType(), file.getSize());
+            return new UploadFileResponse(fileName, fileDownloadUri, bulk.getContentType(), bulk.getSize());
+        } catch (IOException exception) {
+            LOGGER.error(exception.getMessage());
+        }
+        return null;
     }
 
     @PostMapping("/uploadMultipleFiles")
@@ -88,7 +94,7 @@ public class FileController {
         try {
             contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
         } catch (IOException ex) {
-            logger.info("Could not determine file type.");
+            LOGGER.info("Could not determine file type.");
         }
 
         // Fallback to the default content type if type could not be determined

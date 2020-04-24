@@ -6,8 +6,9 @@ let singleFileUploadError = document.querySelector('#singleFileUploadError');
 let singleFileUploadSuccess = document.querySelector('#singleFileUploadSuccess');
 
 let singleSearchForm = document.querySelector('#singleSearchForm');
-let singleSearchFormInput = document.getElementById("singleSearchFormInput").value;
-let pageNumberInput = document.querySelector('#pageNumberInput');
+let singleFileSearchError = document.querySelector('#singleFileSearchError');
+let singleFileSearchSuccess = document.querySelector('#singleFileSearchSuccess');
+
 
 let multipleUploadForm = document.querySelector('#multipleUploadForm');
 let multipleFileUploadInput = document.querySelector('#multipleFileUploadInput');
@@ -44,12 +45,12 @@ function submitSingleSearch(searchQuery, pageNumber) {
         console.log(xhr.responseText);
         let response = JSON.parse(xhr.responseText);
         if (xhr.status === 200) {
-            singleFileUploadError.style.display = "none";
-            singleFileUploadSuccess.innerHTML = "<p>File created Successfully.</p><p>DownloadUrl : <a href='" + response.fileDownloadUri + "' target='_blank'>" + response.fileDownloadUri + "</a></p>";
-            singleFileUploadSuccess.style.display = "block";
+            singleFileSearchError.style.display = "none";
+            singleFileSearchSuccess.innerHTML = "<p>File created Successfully.</p><p>DownloadUrl : <a href='" + response.fileDownloadUri + "' target='_blank'>" + response.fileDownloadUri + "</a></p>";
+            singleFileSearchSuccess.style.display = "block";
         } else {
-            singleFileUploadSuccess.style.display = "none";
-            singleFileUploadError.innerHTML = (response && response.message) || "Some Error Occurred";
+            singleFileSearchSuccess.style.display = "none";
+            singleFileSearchError.innerHTML = (response && response.message) || "Some Error Occurred";
         }
         doneLoading();
     };
@@ -66,6 +67,7 @@ function submitSingleSearch(searchQuery, pageNumber) {
 
 
 function uploadSingleFile(file) {
+    isLoading();
     let formData = new FormData();
     formData.append("file", file);
 
@@ -83,12 +85,22 @@ function uploadSingleFile(file) {
             singleFileUploadSuccess.style.display = "none";
             singleFileUploadError.innerHTML = (response && response.message) || "Some Error Occurred";
         }
+        doneLoading();
+    };
+
+    xhr.onerror = function () {
+        doneLoading();
+    };
+
+    xhr.onabort = function () {
+        doneLoading();
     };
 
     xhr.send(formData);
 }
 
 function uploadMultipleFiles(files) {
+    isLoading();
     let formData = new FormData();
     for (let index = 0; index < files.length; index++) {
         formData.append("files", files[index]);
@@ -112,6 +124,15 @@ function uploadMultipleFiles(files) {
             multipleFileUploadSuccess.style.display = "none";
             multipleFileUploadError.innerHTML = (response && response.message) || "Some Error Occurred";
         }
+        doneLoading();
+    };
+
+    xhr.onerror = function () {
+        doneLoading();
+    };
+
+    xhr.onabort = function () {
+        doneLoading();
     };
     xhr.send(formData);
 }
@@ -124,38 +145,38 @@ function uploadMultipleFiles(files) {
         const pageNumber = document.getElementById("pageNumberInput").value;
 
         if (searchQuery.length === 0) {
-            singleFileUploadError.innerHTML = "Please fill out the url field";
-            singleFileUploadError.style.display = "block";
+            singleFileSearchError.innerHTML = "Please fill out the url field";
+            singleFileSearchError.style.display = "block";
         }
         if (pageNumber.length === 0 && !pageNumber.numeric) {
-            singleFileUploadError.innerHTML = "Please enter page number fields";
-            singleFileUploadError.style.display = "block";
+            singleFileSearchError.innerHTML = "Please enter page number fields";
+            singleFileSearchError.style.display = "block";
         }
 
         submitSingleSearch(searchQuery, pageNumber);
     });
 
+    singleUploadForm.addEventListener('submit', function (event) {
+        const files = singleFileUploadInput.files;
+        event.preventDefault();
+
+        console.log(files)
+        if (files.length === 0) {
+            singleFileUploadError.innerHTML = "Please select a file";
+            singleFileUploadError.style.display = "block";
+        }
+        uploadSingleFile(files[0]);
+    });
 
     multipleUploadForm.addEventListener('submit', function (event) {
-        let files = multipleFileUploadInput.files;
+        const files = multipleFileUploadInput.files;
+        event.preventDefault();
         if (files.length === 0) {
             multipleFileUploadError.innerHTML = "Please select at least one file";
             multipleFileUploadError.style.display = "block";
         }
         uploadMultipleFiles(files);
-        event.preventDefault();
     });
 
     console.log('Script Loaded');
 })();
-
-
-// singleUploadForm.addEventListener('submit', function (event) {
-//     let files = singleFileUploadInput.files;
-//     if (files.length === 0) {
-//         singleFileUploadError.innerHTML = "Please select a file";
-//         singleFileUploadError.style.display = "block";
-//     }
-//     uploadSingleFile(files[0]);
-//     event.preventDefault();
-// }, true);

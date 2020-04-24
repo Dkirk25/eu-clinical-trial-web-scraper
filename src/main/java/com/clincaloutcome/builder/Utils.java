@@ -1,5 +1,8 @@
 package com.clincaloutcome.builder;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class Utils {
 
     String trailParser(String word, String regex) {

@@ -3,7 +3,6 @@ package com.clincaloutcome.builder;
 import com.clincaloutcome.model.EUClinical;
 import com.clincaloutcome.model.USClinical;
 import com.poiji.bind.Poiji;
-import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jsoup.nodes.Document;
@@ -11,35 +10,37 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
 import java.util.*;
 
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toCollection;
 
+@Component
 class ExcelBuilder {
     private static final Logger LOGGER = LoggerFactory.getLogger(ExcelBuilder.class);
 
-    private Utils utility = new Utils();
+    @Autowired
+    private Utils utility;
 
-    private List<String> listOfEudra = new ArrayList<>();
-    private List<String> listOfSponsorProtocol = new ArrayList<>();
-    private List<String> listOfStartDates = new ArrayList<>();
-    private List<String> listOfSponsorNames = new ArrayList<>();
-    private List<String> listOfFullTitles = new ArrayList<>();
-    private List<String> listOfMedicalConditions = new ArrayList<>();
-    private List<String> listOfDiseases = new ArrayList<>();
-    private List<String> listOfPopulationAge = new ArrayList<>();
-    private List<String> listOfGenders = new ArrayList<>();
-    private List<String> listOfTrailProtocols = new ArrayList<>();
-    private List<String> listOfTrailResults = new ArrayList<>();
-    private List<String> listOfPrimaryEndPoints = new ArrayList<>();
-    private List<String> listOfSecondaryEndPoints = new ArrayList<>();
+    private final List<String> listOfEudra = new ArrayList<>();
+    private final List<String> listOfSponsorProtocol = new ArrayList<>();
+    private final List<String> listOfStartDates = new ArrayList<>();
+    private final List<String> listOfSponsorNames = new ArrayList<>();
+    private final List<String> listOfFullTitles = new ArrayList<>();
+    private final List<String> listOfMedicalConditions = new ArrayList<>();
+    private final List<String> listOfDiseases = new ArrayList<>();
+    private final List<String> listOfPopulationAge = new ArrayList<>();
+    private final List<String> listOfGenders = new ArrayList<>();
+    private final List<String> listOfTrailProtocols = new ArrayList<>();
+    private final List<String> listOfTrailResults = new ArrayList<>();
+    private final List<String> listOfPrimaryEndPoints = new ArrayList<>();
+    private final List<String> listOfSecondaryEndPoints = new ArrayList<>();
 
 
     void buildEUListFromWebResults(Elements eudraCTNumber) {
@@ -152,13 +153,12 @@ class ExcelBuilder {
             }
 
             // Write the output to a file
-            FileOutputStream fileOut = new FileOutputStream("uploads/"+outputFile);
+            FileOutputStream fileOut = new FileOutputStream("uploads/" + outputFile);
             workbook.write(fileOut);
             fileOut.close();
         } catch (IOException e) {
             LOGGER.error("Can't Parse File {}", e.getMessage());
         }
-       // autoOpenExcel(outputFile);
     }
 
     private void createExcelHeaders(String[] columns, CellStyle headerCellStyle, Sheet sheet) {
@@ -211,7 +211,6 @@ class ExcelBuilder {
 
             listOfPrimaryEndPoints.add(utility.trailParser(primary.get(0), "E.5.1 Primary end point"));
             listOfSecondaryEndPoints.add(utility.trailParser(secondary.get(0), secondaryEndpoint));
-
         } catch (IOException e) {
             LOGGER.error("Bad url for primary and secondary endpoints.");
         }
@@ -319,7 +318,6 @@ class ExcelBuilder {
                 sheet.autoSizeColumn(i);
             }
 
-
             // Write the output to a file
             FileOutputStream fileOut = new FileOutputStream(outputFile);
             workbook.write(fileOut);
@@ -327,15 +325,6 @@ class ExcelBuilder {
 
         } catch (IOException e) {
             LOGGER.error("Can't Parse File.");
-        }
-        autoOpenExcel(outputFile);
-    }
-
-    private void autoOpenExcel(String outputFile) {
-        try {
-            Desktop.getDesktop().open(new File(outputFile));
-        } catch (IOException e) {
-            LOGGER.error("Can't AutoOpen Excel File.");
         }
     }
 }

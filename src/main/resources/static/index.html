@@ -39,11 +39,29 @@
                 <div class="preloader preloader-exited">
                     <img src="./spinner.svg" alt="spinner">
                 </div>
+                <div id="singleFileSearchError"></div>
+                <div id="singleFileSearchSuccess"></div>
+            </div>
+        </div>
+
+
+        <!--Upload Bulk-->
+        <div class="single-upload">
+            <h3>Upload Single File</h3>
+            <form id="singleUploadForm" name="singleUploadForm">
+                <input id="singleFileUploadInput" type="file" name="file" class="file-input" required/>
+                <button type="submit" class="primary submit-btn">Submit</button>
+            </form>
+            <div class="upload-response">
+                <div class="preloader preloader-exited">
+                    <img src="./spinner.svg" alt="spinner">
+                </div>
                 <div id="singleFileUploadError"></div>
                 <div id="singleFileUploadSuccess"></div>
             </div>
         </div>
 
+        <!--Upload Multiple Files-->
         <div class="multiple-upload">
             <h3>Upload Multiple Files</h3>
             <form id="multipleUploadForm" name="multipleUploadForm">
@@ -51,6 +69,9 @@
                 <button type="submit" class="primary submit-btn">Submit</button>
             </form>
             <div class="upload-response">
+                <div class="preloader preloader-exited">
+                    <img src="./spinner.svg" alt="spinner">
+                </div>
                 <div id="multipleFileUploadError"></div>
                 <div id="multipleFileUploadSuccess"></div>
             </div>
