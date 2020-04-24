@@ -1,9 +1,13 @@
 package com.clincaloutcome.builder;
 
 import com.clincaloutcome.model.EUClinical;
-import com.clincaloutcome.model.USClinical;
-import com.poiji.bind.Poiji;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -13,13 +17,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.*;
-
-import static java.util.stream.Collectors.collectingAndThen;
-import static java.util.stream.Collectors.toCollection;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 class ExcelBuilder {
@@ -216,61 +217,7 @@ class ExcelBuilder {
         }
     }
 
-
-    private <T> List<T> readExcelFile(String file, Class<T> requestClass) {
-        return Poiji.fromExcel(new File(file), requestClass);
-    }
-
-    List<EUClinical> extractMatchesFromBothLists(String usFile, String euFile) {
-        // Take list of US Clinical CSV file
-        List<USClinical> usClinicalList = readExcelFile(usFile, USClinical.class);
-
-        List<USClinical> usListWithoutDuplicates = getListWithoutDuplicates(usClinicalList);
-
-        // Take list of EU Clinical excel file
-        List<EUClinical> euClinicalList = readExcelFile(euFile, EUClinical.class);
-
-        List<EUClinical> distinctEUList1 = euClinicalList.stream()
-                .collect(collectingAndThen(toCollection(() ->
-                                new TreeSet<>(
-                                        Comparator.comparing(EUClinical::getSponsorProtocolNumber,
-                                                Comparator.nullsFirst(Comparator.naturalOrder())))),
-                        ArrayList::new));
-
-        return removeUSProtocolsFromEUList(distinctEUList1, usListWithoutDuplicates);
-    }
-
-    private ArrayList<USClinical> getListWithoutDuplicates(List<USClinical> usClinicalList) {
-        return usClinicalList.stream()
-                .collect(collectingAndThen(toCollection(() ->
-                                new TreeSet<>(
-                                        Comparator.comparing(USClinical::getOtherId,
-                                                Comparator.nullsFirst(Comparator.naturalOrder())))),
-                        ArrayList::new));
-    }
-
-    private List<EUClinical> removeUSProtocolsFromEUList(List<EUClinical> euList, List<USClinical> usList) {
-        List<EUClinical> newEuList = new ArrayList<>(euList);
-
-        for (EUClinical euClinical : euList) {
-            for (USClinical otherId : usList) {
-                if (otherId.getOtherId().contains("|")) {
-                    String[] words = otherId.getOtherId().split("\\|");
-                    List<String> wordArrayList = new ArrayList<>(Arrays.asList(words));
-                    for (String word : wordArrayList) {
-                        if (word.equalsIgnoreCase(euClinical.getSponsorProtocolNumber())) {
-                            newEuList.remove(euClinical);
-                        }
-                    }
-                } else if (otherId.getOtherId().equalsIgnoreCase(euClinical.getSponsorProtocolNumber())) {
-                    newEuList.remove(euClinical);
-                }
-            }
-        }
-        return newEuList;
-    }
-
-    void printEUListToExcel(List<EUClinical> euClinicalList) {
+    public void printEUListToExcel(List<EUClinical> euClinicalList) {
         String[] columns = {"EudraCT Number", "Sponsor Protocol Number", "Start Date", "Sponsor Name", "Full Title", "Medical Condition", "Disease", "Population Age", "Gender", "Trial Protocol", "Trial Results", "Primary End Points", "Secondary End Points"};
 
         String outputFile = "./MatchedEUClinicalTrails.xlsx";

@@ -13,6 +13,10 @@ import java.security.cert.X509Certificate;
 
 public class SSLHelper {
 
+    private SSLHelper() {
+        // Empty Constructor
+    }
+
     public static Connection getConnection(String url) {
         return Jsoup.connect(url).sslSocketFactory(SSLHelper.socketFactory());
     }
@@ -24,9 +28,11 @@ public class SSLHelper {
             }
 
             public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                // Empty Constructor
             }
 
             public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                // Empty Constructor
             }
         }};
 

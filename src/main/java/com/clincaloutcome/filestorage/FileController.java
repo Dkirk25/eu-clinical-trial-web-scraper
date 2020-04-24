@@ -9,12 +9,20 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,21 +49,6 @@ public class FileController {
                 .toUriString();
 
         return new UploadFileResponse(fileName, fileDownloadUri, multipartFileToSend.getContentType(), multipartFileToSend.getSize());
-    }
-
-    private MultipartFile getMultipartFile() throws IOException {
-        File file = new File("./uploads/EUClinicalTrails.xlsx");
-        InputStream stream = new FileInputStream(file);
-        return new MockMultipartFile("EUClinicalTrails", file.getName(), MediaType.ALL_VALUE, stream);
-    }
-
-    public static File convert(MultipartFile file) throws IOException {
-        File convFile = new File(file.getOriginalFilename());
-        convFile.createNewFile();
-        FileOutputStream fos = new FileOutputStream(convFile);
-        fos.write(file.getBytes());
-        fos.close();
-        return convFile;
     }
 
     @PostMapping("/uploadFile")
@@ -106,5 +99,27 @@ public class FileController {
                 .contentType(MediaType.parseMediaType(contentType))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
+    }
+
+
+    private MultipartFile getMultipartFile() throws IOException {
+        File file = new File("./uploads/EUClinicalTrails.xlsx");
+        InputStream stream = new FileInputStream(file);
+        return new MockMultipartFile("EUClinicalTrails", file.getName(), MediaType.ALL_VALUE, stream);
+    }
+
+    public static File convert(MultipartFile file) throws IOException {
+        if (file != null && file.getOriginalFilename() != null) {
+            File convFile = new File(file.getOriginalFilename());
+            if (convFile.createNewFile()) {
+                try (FileOutputStream fos = new FileOutputStream(convFile)) {
+                    fos.write(file.getBytes());
+                } catch (Exception e) {
+                    LOGGER.error("Cannot write file.", e);
+                }
+            }
+            return convFile;
+        }
+        return null;
     }
 }

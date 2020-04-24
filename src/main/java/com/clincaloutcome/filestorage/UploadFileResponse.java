@@ -13,11 +13,6 @@ public class UploadFileResponse {
         this.size = size;
     }
 
-    public UploadFileResponse(String fileName, String fileDownloadUri) {
-        this.fileName = fileName;
-        this.fileDownloadUri = fileDownloadUri;
-    }
-
     public String getFileName() {
         return fileName;
     }

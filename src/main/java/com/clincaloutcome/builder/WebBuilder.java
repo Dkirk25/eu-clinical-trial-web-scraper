@@ -14,6 +14,9 @@ public class WebBuilder {
     private ExcelBuilder excelBuilder;
 
     @Autowired
+    private USandEUBuilder uSandEUBuilder;
+
+    @Autowired
     private ClinicalPageHelper clinicalPageHelper;
 
     public void singleBuilder(final String url, final String pages) {
@@ -27,7 +30,7 @@ public class WebBuilder {
     }
 
     public void crossBuilder(final String usTrialFile, final String euTrialFile) {
-        List<EUClinical> euList = excelBuilder.extractMatchesFromBothLists(usTrialFile, euTrialFile);
+        List<EUClinical> euList = uSandEUBuilder.extractMatchesFromBothLists(usTrialFile, euTrialFile);
         excelBuilder.printEUListToExcel(euList);
     }
 }
