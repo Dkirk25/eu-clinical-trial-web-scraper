@@ -23,9 +23,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 public class FileController {
@@ -70,11 +70,50 @@ public class FileController {
         return null;
     }
 
+
+    public UploadFileResponse uploadExcelFile(@RequestParam("file") MultipartFile bulk) {
+        try {
+
+            //webBuilder.crossBuilder(convert(bulk));
+            MultipartFile multipartFileToSend = getMultipartFile();
+            String fileName = fileStorageService.storeFile(multipartFileToSend);
+
+            String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                    .path("/downloadFile/")
+                    .path(fileName)
+                    .toUriString();
+
+            return new UploadFileResponse(fileName, fileDownloadUri, bulk.getContentType(), bulk.getSize());
+        } catch (IOException exception) {
+            LOGGER.error(exception.getMessage());
+        }
+        return null;
+    }
+
     @PostMapping("/uploadMultipleFiles")
-    public List<UploadFileResponse> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files) {
-        return Arrays.stream(files)
-                .map(this::uploadFile)
-                .collect(Collectors.toList());
+    public List<UploadFileResponse> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files) throws IOException {
+        List<String> listOfFilesNames = new ArrayList<>();
+        for (MultipartFile multipartFile : files) {
+            File file = new File(multipartFile.getName());
+            InputStream stream = new FileInputStream(file);
+            MockMultipartFile mockMultipartFile = new MockMultipartFile(file.getName(), file.getName(), MediaType.ALL_VALUE, stream);
+            String fileName = fileStorageService.storeFile(mockMultipartFile);
+            listOfFilesNames.add(fileName);
+        }
+        int count = 0;
+        String file1 = listOfFilesNames.get(count);
+        String file2 = listOfFilesNames.get(count + 1);
+
+        // Run Excel Builder
+        webBuilder.crossBuilder(file1, file2);
+
+        // Load from file name.
+        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/downloadFile/")
+                .path("MatchedEUClinicalTrails.xlsx")
+                .toUriString();
+
+        return Collections.singletonList(new UploadFileResponse("MatchedEUClinicalTrails", fileDownloadUri));
     }
 
     @GetMapping("/downloadFile/{fileName:.+}")

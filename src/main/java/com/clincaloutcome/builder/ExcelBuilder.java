@@ -266,7 +266,7 @@ class ExcelBuilder {
             }
 
             // Write the output to a file
-            FileOutputStream fileOut = new FileOutputStream(outputFile);
+            FileOutputStream fileOut = new FileOutputStream("uploads/" +outputFile);
             workbook.write(fileOut);
             fileOut.close();
 

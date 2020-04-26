@@ -12,7 +12,7 @@
 
 <div class="upload-container">
     <div class="upload-header">
-        <h2>Clinical Trial Converter</h2>
+        <h2>EU Clinical Trial Converter</h2>
     </div>
 
     <div class="upload-content">
@@ -44,10 +44,13 @@
             </div>
         </div>
 
-
         <!--Upload Bulk-->
         <div class="single-upload">
-            <h3>Upload Single File</h3>
+            <h3>Bulk Search</h3>
+            <p>Format needs to be in a txt. Each line needs to be &lt;url&gt; space &lt;pages&gt;</p>
+            <p>Example:<small><a href="javascript:void(0)"
+                                 onclick="location.href='https://drive.google.com/uc?export=download&id=1AMOhSANd1W5yFW1bkNnDIsXEOiC0xIT4'"
+                                 target='_blank'>Here</a></small></p>
             <form id="singleUploadForm" name="singleUploadForm">
                 <input id="singleFileUploadInput" type="file" name="file" class="file-input" required/>
                 <button type="submit" class="primary submit-btn">Submit</button>
@@ -63,10 +66,29 @@
 
         <!--Upload Multiple Files-->
         <div class="multiple-upload">
-            <h3>Upload Multiple Files</h3>
+            <h3>Cross Search US and EU</h3>
+            <p> Provide a US and EU file and an EU File will be returned with matching cases from US/EU.</p>
             <form id="multipleUploadForm" name="multipleUploadForm">
-                <input id="multipleFileUploadInput" type="file" name="files" class="file-input" multiple required/>
-                <button type="submit" class="primary submit-btn">Submit</button>
+                <div class="container">
+                    <h3>US File</h3>
+                    <p>Example:<small><a href="javascript:void(0)"
+                                         onclick="location.href='https://drive.google.com/uc?export=download&id=1vJfg2gogciz_6YrkZ2eT12DrLWzKnGlP'"
+                                         target='_blank'>Here</a></small></p>
+                    <input id="multipleFileUploadInput" type="file" name="files" class="file-input" multiple
+                           required/>
+                </div>
+
+                <div class="container">
+                    <h3>EU File</h3>
+                    <p>Example:<small><a href="javascript:void(0)"
+                                         onclick="location.href='https://drive.google.com/uc?export=download&id=1vWfj4eLYxz0xmYi1Cmb8bpW3MLyiNuvu'"
+                                         target='_blank'>Here</a></small></p>
+                    <input id="multipleFileUploadInput2" type="file" name="files2" class="file-input" multiple
+                           required/>
+                </div>
+                <div class="container" style="padding-top: 10px">
+                    <button type="submit" class="primary submit-btn">Submit</button>
+                </div>
             </form>
             <div class="upload-response">
                 <div class="preloader preloader-exited">

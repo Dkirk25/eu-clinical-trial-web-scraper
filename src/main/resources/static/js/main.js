@@ -12,6 +12,7 @@ let singleFileSearchSuccess = document.querySelector('#singleFileSearchSuccess')
 
 let multipleUploadForm = document.querySelector('#multipleUploadForm');
 let multipleFileUploadInput = document.querySelector('#multipleFileUploadInput');
+let multipleFileUploadInput2 = document.querySelector('#multipleFileUploadInput2');
 let multipleFileUploadError = document.querySelector('#multipleFileUploadError');
 let multipleFileUploadSuccess = document.querySelector('#multipleFileUploadSuccess');
 
@@ -99,12 +100,17 @@ function uploadSingleFile(file) {
     xhr.send(formData);
 }
 
+// [us, eu]
 function uploadMultipleFiles(files) {
     isLoading();
     let formData = new FormData();
-    for (let index = 0; index < files.length; index++) {
-        formData.append("files", files[index]);
-    }
+    console.log('Files', files);
+    files.forEach(function (region) {
+        region.forEach(function (file, index) {
+            console.log(`File ${index}:`, file);
+            formData.append('files', file);
+        })
+    })
 
     let xhr = new XMLHttpRequest();
     xhr.open("POST", "/uploadMultipleFiles");
@@ -169,7 +175,9 @@ function uploadMultipleFiles(files) {
     });
 
     multipleUploadForm.addEventListener('submit', function (event) {
-        const files = multipleFileUploadInput.files;
+        const usFile = multipleFileUploadInput.files;
+        const euFile = multipleFileUploadInput2.files;
+        const files = [Array.from(usFile), Array.from(euFile)]
         event.preventDefault();
         if (files.length === 0) {
             multipleFileUploadError.innerHTML = "Please select at least one file";
@@ -177,6 +185,5 @@ function uploadMultipleFiles(files) {
         }
         uploadMultipleFiles(files);
     });
-
     console.log('Script Loaded');
 })();

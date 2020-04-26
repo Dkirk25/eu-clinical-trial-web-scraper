@@ -14,23 +14,28 @@ public class WebBuilder {
     private ExcelBuilder excelBuilder;
 
     @Autowired
-    private USandEUBuilder uSandEUBuilder;
+    private USandEUBuilder usAndEUBuilder;
 
     @Autowired
     private ClinicalPageHelper clinicalPageHelper;
 
     public void singleBuilder(final String url, final String pages) {
+        // Have this return a map of lists
         clinicalPageHelper.iterateThroughUrlAndPage(url, pages);
+
+        // Pass Map in
         excelBuilder.printFromEUTrialExcelFile();
     }
 
     public void bulkBuilder(final File file) {
+        // Have this return a map of lists
         clinicalPageHelper.createUsingBulkFile(file);
+        // Pass Map in
         excelBuilder.printFromEUTrialExcelFile();
     }
 
     public void crossBuilder(final String usTrialFile, final String euTrialFile) {
-        List<EUClinical> euList = uSandEUBuilder.extractMatchesFromBothLists(usTrialFile, euTrialFile);
+        List<EUClinical> euList = usAndEUBuilder.extractMatchesFromBothLists(usTrialFile, euTrialFile);
         excelBuilder.printEUListToExcel(euList);
     }
 }
