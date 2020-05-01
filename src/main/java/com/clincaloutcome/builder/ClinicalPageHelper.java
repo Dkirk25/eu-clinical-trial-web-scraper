@@ -12,6 +12,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class ClinicalPageHelper {
@@ -20,7 +23,7 @@ public class ClinicalPageHelper {
     @Autowired
     private ExcelBuilder excelBuilder;
 
-    public void iterateThroughUrlAndPage(String url, String pages) {
+    public Map<String, List<String>> iterateThroughUrlAndPage(String url, String pages) {
         if (!StringUtils.isEmpty(url) && !StringUtils.isEmpty(pages)) {
             try {
                 int i = 1;
@@ -31,7 +34,7 @@ public class ClinicalPageHelper {
 
                     if (doc != null) {
                         Elements eudraCTNumber = doc.select("div.results.grid_8plus > table > tbody > tr > td");
-                        excelBuilder.buildEUListFromWebResults(eudraCTNumber);
+                        return excelBuilder.buildEUListFromWebResults(eudraCTNumber);
                     }
                     i++;
                 }
@@ -41,6 +44,7 @@ public class ClinicalPageHelper {
         } else {
             LOGGER.error("Url or Page Number is empty!");
         }
+        return new HashMap<>();
     }
 
     public void createUsingBulkFile(File bulk) {

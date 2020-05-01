@@ -52,42 +52,17 @@ public class FileController {
     }
 
     @PostMapping("/uploadFile")
-    public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile bulk) {
-        try {
-            webBuilder.bulkBuilder(convert(bulk));
-            MultipartFile multipartFileToSend = getMultipartFile();
-            String fileName = fileStorageService.storeFile(multipartFileToSend);
+    public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile bulk) throws IOException {
+        webBuilder.bulkBuilder(multipartFileToFile(bulk));
+        MultipartFile multipartFileToSend = getMultipartFile();
+        String fileName = fileStorageService.storeFile(multipartFileToSend);
 
-            String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                    .path("/downloadFile/")
-                    .path(fileName)
-                    .toUriString();
+        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/downloadFile/")
+                .path(fileName)
+                .toUriString();
 
-            return new UploadFileResponse(fileName, fileDownloadUri, bulk.getContentType(), bulk.getSize());
-        } catch (IOException exception) {
-            LOGGER.error(exception.getMessage());
-        }
-        return null;
-    }
-
-
-    public UploadFileResponse uploadExcelFile(@RequestParam("file") MultipartFile bulk) {
-        try {
-
-            //webBuilder.crossBuilder(convert(bulk));
-            MultipartFile multipartFileToSend = getMultipartFile();
-            String fileName = fileStorageService.storeFile(multipartFileToSend);
-
-            String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                    .path("/downloadFile/")
-                    .path(fileName)
-                    .toUriString();
-
-            return new UploadFileResponse(fileName, fileDownloadUri, bulk.getContentType(), bulk.getSize());
-        } catch (IOException exception) {
-            LOGGER.error(exception.getMessage());
-        }
-        return null;
+        return new UploadFileResponse(fileName, fileDownloadUri, bulk.getContentType(), bulk.getSize());
     }
 
     @PostMapping("/uploadMultipleFiles")
@@ -147,7 +122,7 @@ public class FileController {
         return new MockMultipartFile("EUClinicalTrails", file.getName(), MediaType.ALL_VALUE, stream);
     }
 
-    public static File convert(MultipartFile file) throws IOException {
+    public static File multipartFileToFile(MultipartFile file) throws IOException {
         if (file != null && file.getOriginalFilename() != null) {
             File convFile = new File(file.getOriginalFilename());
             if (convFile.createNewFile()) {

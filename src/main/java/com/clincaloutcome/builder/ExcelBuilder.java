@@ -20,7 +20,9 @@ import org.springframework.stereotype.Component;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 class ExcelBuilder {
@@ -44,7 +46,8 @@ class ExcelBuilder {
     private final List<String> listOfSecondaryEndPoints = new ArrayList<>();
 
 
-    void buildEUListFromWebResults(Elements eudraCTNumber) {
+    public Map<String, List<String>> buildEUListFromWebResults(Elements eudraCTNumber) {
+        Map<String, List<String>> listOfResults = new HashMap<>();
         String mainEudraCT = "";
         for (Element number : eudraCTNumber) {
             String eudraCT;
@@ -85,6 +88,21 @@ class ExcelBuilder {
                 listOfTrailResults.add(utility.wordParser(number.text()));
             }
         }
+        listOfResults.put("eudraCT", listOfEudra);
+        listOfResults.put("sponsorProtocols", listOfSponsorProtocol);
+        listOfResults.put("startDates", listOfStartDates);
+        listOfResults.put("sponsorNames", listOfSponsorNames);
+        listOfResults.put("fullTitles", listOfFullTitles);
+        listOfResults.put("medicalConditions", listOfMedicalConditions);
+        listOfResults.put("diseases", listOfDiseases);
+        listOfResults.put("populationAge", listOfPopulationAge);
+        listOfResults.put("genders", listOfGenders);
+        listOfResults.put("trialProtocol", listOfTrailProtocols);
+        listOfResults.put("primaryEndpoints", listOfPrimaryEndPoints);
+        listOfResults.put("secondaryEndPoints", listOfSecondaryEndPoints);
+        listOfResults.put("trialResults", listOfTrailResults);
+
+        return listOfResults;
     }
 
     private void handleTrialProtocol(String eudraCT, Element number) {
@@ -105,7 +123,7 @@ class ExcelBuilder {
         return firstProtocol;
     }
 
-    void printFromEUTrialExcelFile() {
+    void printFromEUTrialExcelFile(Map<String, List<String>> listOfResults) {
         String[] columns = {"EudraCT Number", "Sponsor Protocol Number", "Start Date", "Sponsor Name", "Full Title", "Medical Condition", "Disease", "Population Age", "Gender", "Trial Protocol", "Trial Results", "Primary End Points", "Secondary End Points"};
         String outputFile = "./EUClinicalTrails.xlsx";
 
@@ -266,7 +284,7 @@ class ExcelBuilder {
             }
 
             // Write the output to a file
-            FileOutputStream fileOut = new FileOutputStream("uploads/" +outputFile);
+            FileOutputStream fileOut = new FileOutputStream("uploads/" + outputFile);
             workbook.write(fileOut);
             fileOut.close();
 
