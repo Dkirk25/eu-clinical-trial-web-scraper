@@ -1,6 +1,5 @@
 package com.clincaloutcome.builder;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -28,11 +27,6 @@ public class WebBuilderTest {
 
     @InjectMocks
     private WebBuilder webBuilder;
-
-    @Before
-    public void setUp() {
-
-    }
 
     @Test
     public void singleBuilder_validateSingleSearch() {

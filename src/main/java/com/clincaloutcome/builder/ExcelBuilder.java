@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -30,14 +29,7 @@ class ExcelBuilder {
         try (Workbook workbook = new XSSFWorkbook()) {
 
             // Create a Font for styling header cells
-            Font headerFont = workbook.createFont();
-            headerFont.setBold(true);
-            headerFont.setFontHeightInPoints((short) 14);
-            headerFont.setColor(IndexedColors.BLACK.getIndex());
-
-            // Create a CellStyle with the font
-            CellStyle headerCellStyle = workbook.createCellStyle();
-            headerCellStyle.setFont(headerFont);
+            CellStyle headerCellStyle = createSheetStyle(workbook);
 
             // Create a Sheet
             Sheet sheet = workbook.createSheet("EUClinical");
@@ -48,7 +40,6 @@ class ExcelBuilder {
             int rowNum = 1;
 
             for (int i = 0; i < listOfResults.get("eudraCT").size(); i++) {
-
                 Row row = sheet.createRow(rowNum++);
 
                 row.createCell(0).setCellValue(nullStringReplacement(listOfResults.get("eudraCT"), i));
@@ -80,50 +71,12 @@ class ExcelBuilder {
         }
     }
 
-    private void populateRowWithList(Map<String, List<String>> listOfResults, Row row, int rowNum, int number) {
-        List<String> keyNames = Arrays.asList("eudraCT", "sponsorProtocols", "startDates", "sponsorNames", "fullTitles",
-                "medicalConditions", "diseases", "populationAge", "genders", "trialProtocol", "primaryEndpoints",
-                "secondaryEndPoints", "trialResults");
-        for (int i = 0; i < listOfResults.get(keyNames.get(rowNum)).size(); i++) {
-            row.createCell(rowNum).setCellValue(listOfResults.get(keyNames.get(rowNum)).get(i));
-        }
-    }
-
-    private String nullStringReplacement(List<String> value, int i) {
-        if (value.isEmpty()) {
-            return "none";
-        } else {
-            return value.get(i);
-        }
-    }
-
-    private void createExcelHeaders(String[] columns, CellStyle headerCellStyle, Sheet sheet) {
-        Row headerRow = sheet.createRow(0);
-
-        // Create cells
-        for (int i = 0; i < columns.length; i++) {
-            Cell cell = headerRow.createCell(i);
-            cell.setCellValue(columns[i]);
-            cell.setCellStyle(headerCellStyle);
-        }
-    }
-
-
     public void printEUListToExcel(List<EUClinical> euClinicalList) {
         String[] columns = {"EudraCT Number", "Sponsor Protocol Number", "Start Date", "Sponsor Name", "Full Title", "Medical Condition", "Disease", "Population Age", "Gender", "Trial Protocol", "Trial Results", "Primary End Points", "Secondary End Points"};
 
         String outputFile = "./MatchedEUClinicalTrails.xlsx";
         try (Workbook workbook = new XSSFWorkbook()) {
-
-            // Create a Font for styling header cells
-            Font headerFont = workbook.createFont();
-            headerFont.setBold(true);
-            headerFont.setFontHeightInPoints((short) 14);
-            headerFont.setColor(IndexedColors.BLACK.getIndex());
-
-            // Create a CellStyle with the font
-            CellStyle headerCellStyle = workbook.createCellStyle();
-            headerCellStyle.setFont(headerFont);
+            CellStyle headerCellStyle = createSheetStyle(workbook);
 
             // Create a Sheet
             Sheet sheet = workbook.createSheet("MatchedEUClinical");
@@ -134,7 +87,6 @@ class ExcelBuilder {
             int rowNum = 1;
 
             for (EUClinical euClinical : euClinicalList) {
-
                 Row row = sheet.createRow(rowNum++);
 
                 row.createCell(0).setCellValue(euClinical.getEudraNumber());
@@ -164,6 +116,38 @@ class ExcelBuilder {
 
         } catch (IOException e) {
             LOGGER.error("Can't Parse File.");
+        }
+    }
+
+    private CellStyle createSheetStyle(Workbook workbook) {
+        // Create a Font for styling header cells
+        Font headerFont = workbook.createFont();
+        headerFont.setBold(true);
+        headerFont.setFontHeightInPoints((short) 14);
+        headerFont.setColor(IndexedColors.BLACK.getIndex());
+
+        // Create a CellStyle with the font
+        CellStyle headerCellStyle = workbook.createCellStyle();
+        headerCellStyle.setFont(headerFont);
+        return headerCellStyle;
+    }
+
+    private String nullStringReplacement(List<String> value, int i) {
+        if (value.isEmpty()) {
+            return "none";
+        } else {
+            return value.get(i);
+        }
+    }
+
+    private void createExcelHeaders(String[] columns, CellStyle headerCellStyle, Sheet sheet) {
+        Row headerRow = sheet.createRow(0);
+
+        // Create cells
+        for (int i = 0; i < columns.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(columns[i]);
+            cell.setCellStyle(headerCellStyle);
         }
     }
 }
