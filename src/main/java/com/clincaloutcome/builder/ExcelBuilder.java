@@ -9,18 +9,13 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -28,103 +23,8 @@ import java.util.Map;
 class ExcelBuilder {
     private static final Logger LOGGER = LoggerFactory.getLogger(ExcelBuilder.class);
 
-    @Autowired
-    private Utils utility;
-
-    private final List<String> listOfEudra = new ArrayList<>();
-    private final List<String> listOfSponsorProtocol = new ArrayList<>();
-    private final List<String> listOfStartDates = new ArrayList<>();
-    private final List<String> listOfSponsorNames = new ArrayList<>();
-    private final List<String> listOfFullTitles = new ArrayList<>();
-    private final List<String> listOfMedicalConditions = new ArrayList<>();
-    private final List<String> listOfDiseases = new ArrayList<>();
-    private final List<String> listOfPopulationAge = new ArrayList<>();
-    private final List<String> listOfGenders = new ArrayList<>();
-    private final List<String> listOfTrailProtocols = new ArrayList<>();
-    private final List<String> listOfTrailResults = new ArrayList<>();
-    private final List<String> listOfPrimaryEndPoints = new ArrayList<>();
-    private final List<String> listOfSecondaryEndPoints = new ArrayList<>();
-
-
-    public Map<String, List<String>> buildEUListFromWebResults(Elements eudraCTNumber) {
-        Map<String, List<String>> listOfResults = new HashMap<>();
-        String mainEudraCT = "";
-        for (Element number : eudraCTNumber) {
-            String eudraCT;
-
-            if (number.text().contains("EudraCT Number:")) {
-                eudraCT = utility.wordParser(number.text());
-                mainEudraCT = eudraCT;
-                listOfEudra.add(eudraCT);
-            }
-            if (number.text().contains("Sponsor Protocol Number:")) {
-                listOfSponsorProtocol.add(utility.wordParser(number.text()));
-            }
-            if (number.text().contains("Start Date*:")) {
-                listOfStartDates.add(utility.wordParser(number.text()));
-            }
-            if (number.text().contains("Sponsor Name:")) {
-                listOfSponsorNames.add(utility.wordParser(number.text()));
-            }
-            if (number.text().contains("Full Title:")) {
-                listOfFullTitles.add(utility.wordParser(number.text()));
-            }
-            if (number.text().contains("Medical condition:")) {
-                listOfMedicalConditions.add(utility.wordParser(number.text()));
-            }
-            if (number.text().contains("Disease:")) {
-                listOfDiseases.add(utility.wordParser(number.text()));
-            }
-            if (number.text().contains("Population Age:")) {
-                listOfPopulationAge.add(utility.wordParser(number.text()));
-            }
-            if (number.text().contains("Gender:")) {
-                listOfGenders.add(utility.wordParser(number.text()));
-            }
-            if (number.text().contains("Trial protocol:")) {
-                handleTrialProtocol(mainEudraCT, number);
-            }
-            if (number.text().contains("Trial results:")) {
-                listOfTrailResults.add(utility.wordParser(number.text()));
-            }
-        }
-        listOfResults.put("eudraCT", listOfEudra);
-        listOfResults.put("sponsorProtocols", listOfSponsorProtocol);
-        listOfResults.put("startDates", listOfStartDates);
-        listOfResults.put("sponsorNames", listOfSponsorNames);
-        listOfResults.put("fullTitles", listOfFullTitles);
-        listOfResults.put("medicalConditions", listOfMedicalConditions);
-        listOfResults.put("diseases", listOfDiseases);
-        listOfResults.put("populationAge", listOfPopulationAge);
-        listOfResults.put("genders", listOfGenders);
-        listOfResults.put("trialProtocol", listOfTrailProtocols);
-        listOfResults.put("primaryEndpoints", listOfPrimaryEndPoints);
-        listOfResults.put("secondaryEndPoints", listOfSecondaryEndPoints);
-        listOfResults.put("trialResults", listOfTrailResults);
-
-        return listOfResults;
-    }
-
-    private void handleTrialProtocol(String eudraCT, Element number) {
-        String protocol = utility.wordParser(number.text());
-        listOfTrailProtocols.add(protocol);
-        String firstProtocol = getProtocolType(protocol);
-        // Go into link and save endpoints.
-        connectAndGrabEndPoints(eudraCT, firstProtocol);
-    }
-
-    private String getProtocolType(String protocol) {
-        String firstProtocol;
-        if (protocol.contains("Outside EU/EEA")) {
-            firstProtocol = "3rd";
-        } else {
-            firstProtocol = protocol.substring(0, 2);
-        }
-        return firstProtocol;
-    }
-
     void printFromEUTrialExcelFile(Map<String, List<String>> listOfResults) {
-        String[] columns = {"EudraCT Number", "Sponsor Protocol Number", "Start Date", "Sponsor Name", "Full Title", "Medical Condition", "Disease", "Population Age", "Gender", "Trial Protocol", "Trial Results", "Primary End Points", "Secondary End Points"};
+        String[] columns = {"EudraCT Number", "Sponsor Protocol Number", "Start Date", "Sponsor Name", "Full Title", "Medical Condition", "Disease", "Population Age", "Gender", "Trial Protocol", "Primary End Points", "Secondary End Points", "Trial Results"};
         String outputFile = "./EUClinicalTrails.xlsx";
 
         try (Workbook workbook = new XSSFWorkbook()) {
@@ -147,23 +47,23 @@ class ExcelBuilder {
 
             int rowNum = 1;
 
-            for (int i = 0; i < listOfEudra.size(); i++) {
+            for (int i = 0; i < listOfResults.get("eudraCT").size(); i++) {
 
                 Row row = sheet.createRow(rowNum++);
 
-                row.createCell(0).setCellValue(listOfEudra.get(i));
-                row.createCell(1).setCellValue(listOfSponsorProtocol.get(i));
-                row.createCell(2).setCellValue(listOfStartDates.get(i));
-                row.createCell(3).setCellValue(listOfSponsorNames.get(i));
-                row.createCell(4).setCellValue(listOfFullTitles.get(i));
-                row.createCell(5).setCellValue(listOfMedicalConditions.get(i));
-                row.createCell(6).setCellValue(listOfDiseases.get(i));
-                row.createCell(7).setCellValue(listOfPopulationAge.get(i));
-                row.createCell(8).setCellValue(listOfGenders.get(i));
-                row.createCell(9).setCellValue(listOfTrailProtocols.get(i));
-                row.createCell(10).setCellValue(listOfTrailResults.get(i));
-                row.createCell(11).setCellValue(listOfPrimaryEndPoints.get(i));
-                row.createCell(12).setCellValue(listOfSecondaryEndPoints.get(i));
+                row.createCell(0).setCellValue(nullStringReplacement(listOfResults.get("eudraCT"), i));
+                row.createCell(1).setCellValue(nullStringReplacement(listOfResults.get("sponsorProtocols"), i));
+                row.createCell(2).setCellValue(nullStringReplacement(listOfResults.get("startDates"), i));
+                row.createCell(3).setCellValue(nullStringReplacement(listOfResults.get("sponsorNames"), i));
+                row.createCell(4).setCellValue(nullStringReplacement(listOfResults.get("fullTitles"), i));
+                row.createCell(5).setCellValue(nullStringReplacement(listOfResults.get("medicalConditions"), i));
+                row.createCell(6).setCellValue(nullStringReplacement(listOfResults.get("diseases"), i));
+                row.createCell(7).setCellValue(nullStringReplacement(listOfResults.get("populationAge"), i));
+                row.createCell(8).setCellValue(nullStringReplacement(listOfResults.get("genders"), i));
+                row.createCell(9).setCellValue(nullStringReplacement(listOfResults.get("trialProtocol"), i));
+                row.createCell(10).setCellValue(nullStringReplacement(listOfResults.get("primaryEndpoints"), i));
+                row.createCell(11).setCellValue(nullStringReplacement(listOfResults.get("secondaryEndPoints"), i));
+                row.createCell(12).setCellValue(nullStringReplacement(listOfResults.get("trialResults"), i));
             }
 
             // Resize all columns to fit the content size
@@ -180,6 +80,23 @@ class ExcelBuilder {
         }
     }
 
+    private void populateRowWithList(Map<String, List<String>> listOfResults, Row row, int rowNum, int number) {
+        List<String> keyNames = Arrays.asList("eudraCT", "sponsorProtocols", "startDates", "sponsorNames", "fullTitles",
+                "medicalConditions", "diseases", "populationAge", "genders", "trialProtocol", "primaryEndpoints",
+                "secondaryEndPoints", "trialResults");
+        for (int i = 0; i < listOfResults.get(keyNames.get(rowNum)).size(); i++) {
+            row.createCell(rowNum).setCellValue(listOfResults.get(keyNames.get(rowNum)).get(i));
+        }
+    }
+
+    private String nullStringReplacement(List<String> value, int i) {
+        if (value.isEmpty()) {
+            return "none";
+        } else {
+            return value.get(i);
+        }
+    }
+
     private void createExcelHeaders(String[] columns, CellStyle headerCellStyle, Sheet sheet) {
         Row headerRow = sheet.createRow(0);
 
@@ -191,49 +108,6 @@ class ExcelBuilder {
         }
     }
 
-    private void connectAndGrabEndPoints(String eudraCT, String firstProtocol) {
-        Document doc2;
-        String url = "https://www.clinicaltrialsregister.eu/ctr-search/trial/" + eudraCT + "/" + firstProtocol;
-
-        try {
-            doc2 = SSLHelper.getConnection(url).get();
-
-            Elements endPoints = doc2.select("#section-e > tbody > tr");
-
-            List<String> allRows = new ArrayList<>();
-
-            endPoints.forEach(string -> allRows.add(string.text()));
-
-            List<String> primary = new ArrayList<>();
-            List<String> secondary = new ArrayList<>();
-
-            allRows.forEach(word -> {
-                if (word.contains("E.5.1 Primary end point")) {
-                    primary.add(word);
-                }
-            });
-
-            if (primary.isEmpty()) {
-                primary.add("None");
-            }
-
-            String secondaryEndpoint = "E.5.2 Secondary end point";
-            allRows.forEach(word -> {
-                if (word.contains(secondaryEndpoint)) {
-                    secondary.add(utility.trailParser(word, secondaryEndpoint));
-                }
-            });
-
-            if (secondary.isEmpty()) {
-                secondary.add("None");
-            }
-
-            listOfPrimaryEndPoints.add(utility.trailParser(primary.get(0), "E.5.1 Primary end point"));
-            listOfSecondaryEndPoints.add(utility.trailParser(secondary.get(0), secondaryEndpoint));
-        } catch (IOException e) {
-            LOGGER.error("Bad url for primary and secondary endpoints.");
-        }
-    }
 
     public void printEUListToExcel(List<EUClinical> euClinicalList) {
         String[] columns = {"EudraCT Number", "Sponsor Protocol Number", "Start Date", "Sponsor Name", "Full Title", "Medical Condition", "Disease", "Population Age", "Gender", "Trial Protocol", "Trial Results", "Primary End Points", "Secondary End Points"};

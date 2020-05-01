@@ -21,23 +21,25 @@ public class ClinicalPageHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(ClinicalPageHelper.class);
 
     @Autowired
-    private ExcelBuilder excelBuilder;
+    private EUBuilder euBuilder;
 
-    public Map<String, List<String>> iterateThroughUrlAndPage(String url, String pages) {
+    public Map<String, List<String>> iterateThroughUrlAndPage(String url, String pages, Map<String, List<String>> listMap) {
         if (!StringUtils.isEmpty(url) && !StringUtils.isEmpty(pages)) {
             try {
                 int i = 1;
                 int pageCount = Integer.parseInt(pages);
+
                 while (i <= pageCount) {
                     Document doc;
                     doc = SSLHelper.getConnection(url + "&page=" + i).ignoreHttpErrors(true).get();
 
                     if (doc != null) {
                         Elements eudraCTNumber = doc.select("div.results.grid_8plus > table > tbody > tr > td");
-                        return excelBuilder.buildEUListFromWebResults(eudraCTNumber);
+                        euBuilder.buildEUListFromWebResults(eudraCTNumber, listMap);
                     }
                     i++;
                 }
+                return listMap;
             } catch (IOException e) {
                 LOGGER.error("Cannot Parse Website!");
             }
@@ -47,17 +49,19 @@ public class ClinicalPageHelper {
         return new HashMap<>();
     }
 
-    public void createUsingBulkFile(File bulk) {
+    public Map<String, List<String>> createUsingBulkFile(File bulk, Map<String, List<String>> listMap) {
         try (BufferedReader br = new BufferedReader(new FileReader(bulk))) {
             String input;
             while ((input = br.readLine()) != null) {
                 String[] line = input.split(" ");
                 String bulkUrl = line[0];
                 String bulkPage = line[1];
-                iterateThroughUrlAndPage(bulkUrl, bulkPage);
+                iterateThroughUrlAndPage(bulkUrl, bulkPage, listMap);
             }
+            return listMap;
         } catch (IOException e) {
             LOGGER.error("Can't Read File.");
         }
+        return new HashMap<>();
     }
 }
