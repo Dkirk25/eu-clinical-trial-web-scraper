@@ -1,4 +1,4 @@
-# eu-clinical-web-scraper
+# eu-clinical-trial-web-scraper
 Scrapes all the info from a search on https://www.clinicaltrialsregister.eu
 
 Ex.) https://www.clinicaltrialsregister.eu/ctr-search/search?query=amyotrophic+lateral+sclerosis&age=adult&phase=phase-two&phase=phase-three&phase=phase-four&dateFrom=2010-01-01&dateTo=2021-01-01
