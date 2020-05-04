@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +22,12 @@ public class EUBuilder {
     private Utils utility;
 
     public Map<String, List<String>> buildEUListFromWebResults(Elements eudraCTNumber, Map<String, List<String>> listOfResults) {
+        List<String> listOfColumns = Arrays.asList("Sponsor Protocol Number:", "Start Date*:", "Sponsor Name:", "Full Title:",
+                "Medical condition:", "Disease:", "Population Age:", "Gender:", "Trial results:");
+
+        List<String> mapFields = Arrays.asList("sponsorProtocols", "startDates", "sponsorNames", "fullTitles",
+                "medicalConditions", "diseases", "populationAge", "genders", "trialResults");
+
         String mainEudraCT = "";
         for (Element number : eudraCTNumber) {
             String eudraCT;
@@ -29,39 +36,16 @@ public class EUBuilder {
                 eudraCT = utility.wordParser(number.text());
                 mainEudraCT = eudraCT;
                 listOfResults.get("eudraCT").add(eudraCT);
-            }
-            if (number.text().contains("Sponsor Protocol Number:")) {
-                listOfResults.get("sponsorProtocols").add(utility.wordParser(number.text()));
-            }
-            if (number.text().contains("Start Date*:")) {
-                listOfResults.get("startDates").add(utility.wordParser(number.text()));
-            }
-            if (number.text().contains("Sponsor Name:")) {
-                listOfResults.get("sponsorNames").add(utility.wordParser(number.text()));
-            }
-            if (number.text().contains("Full Title:")) {
-                listOfResults.get("fullTitles").add(utility.wordParser(number.text()));
-            }
-            if (number.text().contains("Medical condition:")) {
-                listOfResults.get("medicalConditions").add(utility.wordParser(number.text()));
-            }
-            if (number.text().contains("Disease:")) {
-                listOfResults.get("diseases").add(utility.wordParser(number.text()));
-            }
-            if (number.text().contains("Population Age:")) {
-                listOfResults.get("populationAge").add(utility.wordParser(number.text()));
-            }
-            if (number.text().contains("Gender:")) {
-                listOfResults.get("genders").add(utility.wordParser(number.text()));
-            }
-            if (number.text().contains("Trial protocol:")) {
+            } else if (number.text().contains("Trial protocol:")) {
                 handleTrialProtocol(mainEudraCT, number, listOfResults);
-            }
-            if (number.text().contains("Trial results:")) {
-                listOfResults.get("trialResults").add(utility.wordParser(number.text()));
+            } else {
+                for (int i = 0; i < listOfColumns.size(); i++) {
+                    if (number.text().contains(listOfColumns.get(i))) {
+                        listOfResults.get(mapFields.get(i)).add(utility.wordParser(number.text()));
+                    }
+                }
             }
         }
-
         return listOfResults;
     }
 
