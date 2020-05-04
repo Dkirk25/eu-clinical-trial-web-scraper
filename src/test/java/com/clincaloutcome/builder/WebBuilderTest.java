@@ -1,5 +1,6 @@
 package com.clincaloutcome.builder;
 
+import com.clincaloutcome.client.ClinicalPageHelper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;

@@ -1,4 +1,4 @@
-package com.clincaloutcome.builder;
+package com.clincaloutcome.client;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;

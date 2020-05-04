@@ -1,4 +1,4 @@
-package com.clincaloutcome.builder;
+package com.clincaloutcome.client;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
@@ -24,6 +24,7 @@ public class ClinicalPageHelper {
     private EUBuilder euBuilder;
 
     public Map<String, List<String>> iterateThroughUrlAndPage(String url, String pages, Map<String, List<String>> listMap) {
+        Map<String, List<String>> trialMap = new HashMap<>();
         if (!StringUtils.isEmpty(url) && !StringUtils.isEmpty(pages)) {
             try {
                 int i = 1;
@@ -35,11 +36,11 @@ public class ClinicalPageHelper {
 
                     if (doc != null) {
                         Elements eudraCTNumber = doc.select("div.results.grid_8plus > table > tbody > tr > td");
-                        euBuilder.buildEUListFromWebResults(eudraCTNumber, listMap);
+                        trialMap = euBuilder.buildEUListFromWebResults(eudraCTNumber, listMap);
                     }
                     i++;
                 }
-                return listMap;
+                return trialMap;
             } catch (IOException e) {
                 LOGGER.error("Cannot Parse Website!");
             }

@@ -1,5 +1,6 @@
-package com.clincaloutcome.builder;
+package com.clincaloutcome.client;
 
+import com.clincaloutcome.builder.Utils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;

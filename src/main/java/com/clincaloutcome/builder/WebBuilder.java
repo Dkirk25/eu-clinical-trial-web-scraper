@@ -1,5 +1,6 @@
 package com.clincaloutcome.builder;
 
+import com.clincaloutcome.client.ClinicalPageHelper;
 import com.clincaloutcome.model.EUClinical;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -43,16 +44,12 @@ public class WebBuilder {
     }
 
     public void singleBuilder(final String url, final String pages) {
-        // Have this return a map of lists
         Map<String, List<String>> listOfResults = clinicalPageHelper.iterateThroughUrlAndPage(url, pages, listMap);
-        // Pass Map in
         excelBuilder.printFromEUTrialExcelFile(listOfResults);
     }
 
     public void bulkBuilder(final File file) {
-        // Have this return a map of lists
         Map<String, List<String>> listOfResults = clinicalPageHelper.createUsingBulkFile(file, listMap);
-        // Pass Map in
         excelBuilder.printFromEUTrialExcelFile(listOfResults);
     }
 
