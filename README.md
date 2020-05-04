@@ -9,7 +9,7 @@ Here is the UI to search for trials and convert them to an excel sheet.
 https://eu-clinical-trial-converter.herokuapp.com/
 
 
-
+--------------------------------------------------------------------------------
 
 In txt file you can put multiple searches... Paste the url (without the page number) and then the page number next to it..
 
