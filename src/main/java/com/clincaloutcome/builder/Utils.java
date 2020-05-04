@@ -1,19 +1,28 @@
 package com.clincaloutcome.builder;
 
+import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+import java.util.List;
+
+@Component
 public class Utils {
 
-    String trailParser(String word, String regex) {
-        // Dont forget Remove (s)
-        word = word.replaceAll(regex, "");
-        word = word.replaceAll("[(s)]", "");
-        return word.trim();
+    public String trailParser(String word, String regex) {
+        List<String> replacedWords = Arrays.asList(regex, "\\(s\\)");
+
+        String newWord = word;
+        for (String replacedWord : replacedWords) {
+            newWord = newWord.replaceAll(replacedWord, "");
+        }
+        return newWord.trim();
     }
 
-    String wordParser(String word) {
+    public String wordParser(String word) {
         int colon = word.indexOf(':');
         String toReplace = word.substring(0, colon);
         word = word.replaceAll(toReplace, "");
-        word = word.replaceAll(":", "");
+        word = word.replace(":", "");
         word = word.replaceAll("\\*", "");
         return word.trim();
     }
