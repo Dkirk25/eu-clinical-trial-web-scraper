@@ -115,7 +115,7 @@ class ExcelBuilder {
             fileOut.close();
 
         } catch (IOException e) {
-            LOGGER.error("Can't Parse File.");
+            LOGGER.error("Can't Parse File. {}", e.getMessage());
         }
     }
 

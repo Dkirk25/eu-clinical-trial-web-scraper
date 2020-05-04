@@ -79,7 +79,7 @@ public class ParseProtocol {
             listOfResults.get("primaryEndpoints").add(utils.trailParser(primary.get(0), "E.5.1 Primary end point"));
             listOfResults.get("secondaryEndPoints").add(utils.trailParser(secondary.get(0), secondaryEndpoint));
         } catch (IOException e) {
-            LOGGER.error("Bad url for primary and secondary endpoints.");
+            LOGGER.error("Bad url for primary and secondary endpoints. {}", e.getMessage());
         }
     }
 }
