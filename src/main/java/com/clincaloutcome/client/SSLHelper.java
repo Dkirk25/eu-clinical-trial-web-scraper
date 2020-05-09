@@ -1,7 +1,9 @@
 package com.clincaloutcome.client;
 
+import com.clincaloutcome.exception.ClinicalTrialException;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
+import org.springframework.stereotype.Component;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
@@ -11,11 +13,8 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 
+@Component
 public class SSLHelper {
-
-    private SSLHelper() {
-        // Empty Constructor
-    }
 
     public static Connection getConnection(String url) {
         return Jsoup.connect(url).sslSocketFactory(SSLHelper.socketFactory());
@@ -42,7 +41,7 @@ public class SSLHelper {
 
             return sslContext.getSocketFactory();
         } catch (NoSuchAlgorithmException | KeyManagementException e) {
-            throw new RuntimeException("Failed to create a SSL socket factory", e);
+            throw new ClinicalTrialException("Failed to create a SSL socket factory", e);
         }
     }
 }

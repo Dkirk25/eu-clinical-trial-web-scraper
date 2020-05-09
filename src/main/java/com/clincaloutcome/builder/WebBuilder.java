@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 @Component
 public class WebBuilder {
     @Autowired
@@ -23,10 +22,23 @@ public class WebBuilder {
     @Autowired
     private ClinicalPageHelper clinicalPageHelper;
 
-    private final Map<String, List<String>> listMap;
+    public void singleBuilder(final String url, final String pages) {
+        Map<String, List<String>> listOfResults = clinicalPageHelper.iterateThroughUrlAndPage(url, pages, createTrialMap());
+        excelBuilder.printFromEUTrialExcelFile(listOfResults);
+    }
 
-    private WebBuilder() {
-        listMap = new HashMap<>();
+    public void bulkBuilder(final File file) {
+        Map<String, List<String>> listOfResults = clinicalPageHelper.createUsingBulkFile(file, createTrialMap());
+        excelBuilder.printFromEUTrialExcelFile(listOfResults);
+    }
+
+    public void crossBuilder(final String usTrialFile, final String euTrialFile) {
+        List<EUClinical> euList = usAndEUBuilder.extractMatchesFromBothLists(usTrialFile, euTrialFile);
+        excelBuilder.printEUListToExcel(euList);
+    }
+
+    private Map<String, List<String>> createTrialMap() {
+        Map<String, List<String>> listMap = new HashMap<>();
 
         listMap.put("eudraCT", new ArrayList<>());
         listMap.put("sponsorProtocols", new ArrayList<>());
@@ -41,20 +53,7 @@ public class WebBuilder {
         listMap.put("primaryEndpoints", new ArrayList<>());
         listMap.put("secondaryEndPoints", new ArrayList<>());
         listMap.put("trialResults", new ArrayList<>());
-    }
 
-    public void singleBuilder(final String url, final String pages) {
-        Map<String, List<String>> listOfResults = clinicalPageHelper.iterateThroughUrlAndPage(url, pages, listMap);
-        excelBuilder.printFromEUTrialExcelFile(listOfResults);
-    }
-
-    public void bulkBuilder(final File file) {
-        Map<String, List<String>> listOfResults = clinicalPageHelper.createUsingBulkFile(file, listMap);
-        excelBuilder.printFromEUTrialExcelFile(listOfResults);
-    }
-
-    public void crossBuilder(final String usTrialFile, final String euTrialFile) {
-        List<EUClinical> euList = usAndEUBuilder.extractMatchesFromBothLists(usTrialFile, euTrialFile);
-        excelBuilder.printEUListToExcel(euList);
+        return listMap;
     }
 }

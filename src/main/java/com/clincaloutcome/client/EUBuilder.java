@@ -12,8 +12,6 @@ import java.util.Map;
 
 @Component
 public class EUBuilder {
-    @Autowired
-    private Utils utility;
 
     @Autowired
     private ParseProtocol parseProtocol;
@@ -30,7 +28,7 @@ public class EUBuilder {
             String eudraCT;
 
             if (number.text().contains("EudraCT Number:")) {
-                eudraCT = utility.wordParser(number.text());
+                eudraCT = Utils.wordParser(number.text());
                 mainEudraCT = eudraCT;
                 listOfResults.get("eudraCT").add(eudraCT);
             } else if (number.text().contains("Trial protocol:")) {
@@ -38,7 +36,7 @@ public class EUBuilder {
             } else {
                 for (int i = 0; i < listOfColumns.size(); i++) {
                     if (number.text().contains(listOfColumns.get(i))) {
-                        listOfResults.get(mapFields.get(i)).add(utility.wordParser(number.text()));
+                        listOfResults.get(mapFields.get(i)).add(Utils.wordParser(number.text()));
                     }
                 }
             }

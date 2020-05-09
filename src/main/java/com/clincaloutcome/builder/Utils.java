@@ -1,14 +1,15 @@
 package com.clincaloutcome.builder;
 
-import org.springframework.stereotype.Component;
-
 import java.util.Arrays;
 import java.util.List;
 
-@Component
+
 public class Utils {
 
-    public String trailParser(String word, String regex) {
+    private Utils() {
+    }
+
+    public static String trailParser(String word, String regex) {
         List<String> replacedWords = Arrays.asList(regex, "\\(s\\)");
 
         String newWord = word;
@@ -18,7 +19,7 @@ public class Utils {
         return newWord.trim();
     }
 
-    public String wordParser(String word) {
+    public static String wordParser(String word) {
         int colon = word.indexOf(':');
         String toReplace = word.substring(0, colon);
         word = word.replaceAll(toReplace, "");
@@ -27,7 +28,7 @@ public class Utils {
         return word.trim();
     }
 
-    public boolean isValidFileFormat(String file, String fileType) {
+    public static boolean isValidFileFormat(String file, String fileType) {
         return !file.isEmpty() && file.endsWith(fileType);
     }
 }

@@ -1,12 +1,12 @@
 package com.clincaloutcome.client;
 
 import com.clincaloutcome.builder.Utils;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -18,11 +18,8 @@ import java.util.Map;
 public class ParseProtocol {
     private static final Logger LOGGER = LoggerFactory.getLogger(ParseProtocol.class);
 
-    @Autowired
-    private Utils utils;
-
     public void handleTrialProtocol(String eudraCT, Element number, Map<String, List<String>> listOfResults) {
-        String protocol = utils.wordParser(number.text());
+        String protocol = Utils.wordParser(number.text());
         listOfResults.get("trialProtocol").add(protocol);
         String firstProtocol = getProtocolType(protocol);
         // Go into link and save endpoints.
@@ -52,34 +49,24 @@ public class ParseProtocol {
 
             endPoints.forEach(string -> allRows.add(string.text()));
 
-            List<String> primary = new ArrayList<>();
-            List<String> secondary = new ArrayList<>();
-
-            allRows.forEach(word -> {
-                if (word.contains("E.5.1 Primary end point")) {
-                    primary.add(word);
-                }
-            });
-
-            if (primary.isEmpty()) {
-                primary.add("None");
-            }
-
-            String secondaryEndpoint = "E.5.2 Secondary end point";
-            allRows.forEach(word -> {
-                if (word.contains(secondaryEndpoint)) {
-                    secondary.add(utils.trailParser(word, secondaryEndpoint));
-                }
-            });
-
-            if (secondary.isEmpty()) {
-                secondary.add("None");
-            }
-
-            listOfResults.get("primaryEndpoints").add(utils.trailParser(primary.get(0), "E.5.1 Primary end point"));
-            listOfResults.get("secondaryEndPoints").add(utils.trailParser(secondary.get(0), secondaryEndpoint));
+            listOfResults.get("primaryEndpoints").add(addProtocolToMap("E.5.1 Primary end point", allRows));
+            listOfResults.get("secondaryEndPoints").add(addProtocolToMap("E.5.2 Secondary end point", allRows));
         } catch (IOException e) {
             LOGGER.error("Bad url for primary and secondary endpoints. {}", e.getMessage());
         }
+    }
+
+    protected String addProtocolToMap(String specificProtocol, List<String> listOfProtocols) {
+        String tempProtocol = "";
+        for (String word : listOfProtocols) {
+            if (word.contains(specificProtocol)) {
+                tempProtocol = word;
+                return Utils.trailParser(tempProtocol, specificProtocol);
+            }
+        }
+        if (StringUtils.isBlank(tempProtocol)) {
+            tempProtocol = "None";
+        }
+        return Utils.trailParser(tempProtocol, specificProtocol);
     }
 }
