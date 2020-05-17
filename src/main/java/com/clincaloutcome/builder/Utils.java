@@ -1,5 +1,7 @@
 package com.clincaloutcome.builder;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -7,6 +9,10 @@ import java.util.List;
 public class Utils {
 
     private Utils() {
+    }
+
+    public static String nullCheck(String value) {
+        return StringUtils.isNotBlank(value) ? value : "N/A";
     }
 
     public static String trailParser(String word, String regex) {
