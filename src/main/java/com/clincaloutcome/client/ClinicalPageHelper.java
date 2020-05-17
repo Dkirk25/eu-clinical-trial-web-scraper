@@ -12,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,45 +22,51 @@ public class ClinicalPageHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(ClinicalPageHelper.class);
 
     @Autowired
-    private EUBuilder euBuilder;
+    private WebScraper webScraper;
 
-    public Map<String, List<String>> iterateThroughUrlAndPage(String url, String pages, Map<String, List<String>> listMap) {
-        Map<String, List<String>> trialMap = new HashMap<>();
+    public List<List<String>> iterateThroughUrlAndPage(String url, String pages) {
         if (!StringUtils.isEmpty(url) && !StringUtils.isEmpty(pages)) {
             try {
                 int i = 1;
                 int pageCount = Integer.parseInt(pages);
+
+                List<List<String>> mapOfValues = new ArrayList<>();
 
                 while (i <= pageCount) {
                     Document doc;
                     doc = SSLHelper.getConnection(url + "&page=" + i).ignoreHttpErrors(true).get();
 
                     if (doc != null) {
-                        Elements eudraCTNumber = doc.select("div.results.grid_8plus > table > tbody > tr > td");
-                        trialMap = euBuilder.buildEUListFromWebResults(eudraCTNumber, listMap);
+                        // Get list of tables
+                        Elements tableResults = doc.select("table.result > tbody");
+
+                        tableResults.parallelStream().forEach(trialBody -> mapOfValues.add(webScraper.iterateRowInTable(trialBody)));
                     }
                     i++;
                 }
-                return trialMap;
+                return mapOfValues;
             } catch (IOException e) {
                 LOGGER.error("Cannot Parse Website!");
             }
         } else {
             LOGGER.error("Url or Page Number is empty!");
         }
-        return new HashMap<>();
+        return new ArrayList<>();
     }
 
-    public Map<String, List<String>> createUsingBulkFile(File bulk, Map<String, List<String>> listMap) {
+    public Map<Integer, List<List<String>>> createUsingBulkFile(File bulk) {
         try (BufferedReader br = new BufferedReader(new FileReader(bulk))) {
             String input;
+            Map<Integer, List<List<String>>> totalResults = new HashMap<>();
+            Integer count = 0;
             while ((input = br.readLine()) != null) {
                 String[] line = input.split(" ");
                 String bulkUrl = line[0];
                 String bulkPage = line[1];
-                iterateThroughUrlAndPage(bulkUrl, bulkPage, listMap);
+                totalResults.put(count, iterateThroughUrlAndPage(bulkUrl, bulkPage));
+                count++;
             }
-            return listMap;
+            return totalResults;
         } catch (IOException e) {
             LOGGER.error("Can't Read File.");
         }

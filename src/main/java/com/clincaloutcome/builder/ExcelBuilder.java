@@ -19,11 +19,12 @@ import java.util.List;
 import java.util.Map;
 
 @Component
+public
 class ExcelBuilder {
     private static final Logger LOGGER = LoggerFactory.getLogger(ExcelBuilder.class);
 
-    void printFromEUTrialExcelFile(Map<String, List<String>> listOfResults) {
-        String[] columns = {"EudraCT Number", "Sponsor Protocol Number", "Start Date", "Sponsor Name", "Full Title", "Medical Condition", "Disease", "Population Age", "Gender", "Trial Protocol", "Primary End Points", "Secondary End Points", "Trial Results"};
+    public void printFromEUTrialExcelFile(Map<Integer, List<List<String>>> listOfResults) {
+        String[] columns = {"EudraCT Number", "Sponsor Protocol Number", "Start Date", "Sponsor Name", "Full Title", "Medical Condition", "Disease", "Population Age", "Gender", "Trial Protocol", "Trial Results", "Primary End Points", "Secondary End Points"};
         String outputFile = "./EUClinicalTrails.xlsx";
 
         try (Workbook workbook = new XSSFWorkbook()) {
@@ -39,22 +40,27 @@ class ExcelBuilder {
 
             int rowNum = 1;
 
-            for (int i = 0; i < listOfResults.get("eudraCT").size(); i++) {
-                Row row = sheet.createRow(rowNum++);
+            for (int i = 0; i < listOfResults.size(); i++) {
+                List<List<String>> firstFile = listOfResults.get(0);
+                for (List<String> trialData : firstFile) {
+                    int columnCount = 0;
 
-                row.createCell(0).setCellValue(nullStringReplacement(listOfResults.get("eudraCT"), i));
-                row.createCell(1).setCellValue(nullStringReplacement(listOfResults.get("sponsorProtocols"), i));
-                row.createCell(2).setCellValue(nullStringReplacement(listOfResults.get("startDates"), i));
-                row.createCell(3).setCellValue(nullStringReplacement(listOfResults.get("sponsorNames"), i));
-                row.createCell(4).setCellValue(nullStringReplacement(listOfResults.get("fullTitles"), i));
-                row.createCell(5).setCellValue(nullStringReplacement(listOfResults.get("medicalConditions"), i));
-                row.createCell(6).setCellValue(nullStringReplacement(listOfResults.get("diseases"), i));
-                row.createCell(7).setCellValue(nullStringReplacement(listOfResults.get("populationAge"), i));
-                row.createCell(8).setCellValue(nullStringReplacement(listOfResults.get("genders"), i));
-                row.createCell(9).setCellValue(nullStringReplacement(listOfResults.get("trialProtocol"), i));
-                row.createCell(10).setCellValue(nullStringReplacement(listOfResults.get("primaryEndpoints"), i));
-                row.createCell(11).setCellValue(nullStringReplacement(listOfResults.get("secondaryEndPoints"), i));
-                row.createCell(12).setCellValue(nullStringReplacement(listOfResults.get("trialResults"), i));
+                    Row row = sheet.createRow(rowNum++);
+
+                    row.createCell(0).setCellValue(trialData.get(columnCount));
+                    row.createCell(1).setCellValue(trialData.get(columnCount + 1));
+                    row.createCell(2).setCellValue(trialData.get(columnCount + 2));
+                    row.createCell(3).setCellValue(trialData.get(columnCount + 3));
+                    row.createCell(4).setCellValue(trialData.get(columnCount + 4));
+                    row.createCell(5).setCellValue(trialData.get(columnCount + 5));
+                    row.createCell(6).setCellValue(trialData.get(columnCount + 6));
+                    row.createCell(7).setCellValue(trialData.get(columnCount + 7));
+                    row.createCell(8).setCellValue(trialData.get(columnCount + 8));
+                    row.createCell(9).setCellValue(trialData.get(columnCount + 9));
+                    row.createCell(10).setCellValue(trialData.get(columnCount + 10));
+                    row.createCell(11).setCellValue(trialData.get(columnCount + 11));
+                    row.createCell(12).setCellValue(trialData.get(columnCount + 12));
+                }
             }
 
             // Resize all columns to fit the content size
@@ -66,9 +72,11 @@ class ExcelBuilder {
             FileOutputStream fileOut = new FileOutputStream("uploads/" + outputFile);
             workbook.write(fileOut);
             fileOut.close();
-        } catch (IOException e) {
+        } catch (
+                IOException e) {
             LOGGER.error("Can't Parse File {}", e.getMessage());
         }
+
     }
 
     public void printEUListToExcel(List<EUClinical> euClinicalList) {
