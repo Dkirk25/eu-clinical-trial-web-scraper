@@ -47,19 +47,10 @@ class ExcelBuilder {
 
                     Row row = sheet.createRow(rowNum++);
 
-                    row.createCell(0).setCellValue(trialData.get(columnCount));
-                    row.createCell(1).setCellValue(trialData.get(columnCount + 1));
-                    row.createCell(2).setCellValue(trialData.get(columnCount + 2));
-                    row.createCell(3).setCellValue(trialData.get(columnCount + 3));
-                    row.createCell(4).setCellValue(trialData.get(columnCount + 4));
-                    row.createCell(5).setCellValue(trialData.get(columnCount + 5));
-                    row.createCell(6).setCellValue(trialData.get(columnCount + 6));
-                    row.createCell(7).setCellValue(trialData.get(columnCount + 7));
-                    row.createCell(8).setCellValue(trialData.get(columnCount + 8));
-                    row.createCell(9).setCellValue(trialData.get(columnCount + 9));
-                    row.createCell(10).setCellValue(trialData.get(columnCount + 10));
-                    row.createCell(11).setCellValue(trialData.get(columnCount + 11));
-                    row.createCell(12).setCellValue(trialData.get(columnCount + 12));
+                    createRowOfData(row, trialData.get(columnCount), trialData.get(columnCount + 1), trialData.get(columnCount + 2),
+                            trialData.get(columnCount + 3), trialData.get(columnCount + 4), trialData.get(columnCount + 5), trialData.get(columnCount + 6),
+                            trialData.get(columnCount + 7), trialData.get(columnCount + 8), trialData.get(columnCount + 9), trialData.get(columnCount + 10),
+                            trialData.get(columnCount + 11), trialData.get(columnCount + 12));
                 }
             }
 
@@ -97,19 +88,10 @@ class ExcelBuilder {
             for (EUClinical euClinical : euClinicalList) {
                 Row row = sheet.createRow(rowNum++);
 
-                row.createCell(0).setCellValue(euClinical.getEudraNumber());
-                row.createCell(1).setCellValue(euClinical.getSponsorProtocolNumber());
-                row.createCell(2).setCellValue(euClinical.getStartDate());
-                row.createCell(3).setCellValue(euClinical.getSponsorName());
-                row.createCell(4).setCellValue(euClinical.getFullTitle());
-                row.createCell(5).setCellValue(euClinical.getMedicalCondition());
-                row.createCell(6).setCellValue(euClinical.getDisease());
-                row.createCell(7).setCellValue(euClinical.getPopulationAge());
-                row.createCell(8).setCellValue(euClinical.getGender());
-                row.createCell(9).setCellValue(euClinical.getTrialProtocol());
-                row.createCell(10).setCellValue(euClinical.getTrialResult());
-                row.createCell(11).setCellValue(euClinical.getPrimaryEndPoint());
-                row.createCell(12).setCellValue(euClinical.getSecondaryEndPoint());
+                createRowOfData(row, euClinical.getEudraNumber(), euClinical.getSponsorProtocolNumber(), euClinical.getStartDate(),
+                        euClinical.getSponsorName(), euClinical.getFullTitle(), euClinical.getMedicalCondition(), euClinical.getDisease(),
+                        euClinical.getPopulationAge(), euClinical.getGender(), euClinical.getTrialProtocol(), euClinical.getTrialResult(),
+                        euClinical.getPrimaryEndPoint(), euClinical.getSecondaryEndPoint());
             }
 
             // Resize all columns to fit the content size
@@ -124,6 +106,12 @@ class ExcelBuilder {
 
         } catch (IOException e) {
             LOGGER.error("Can't Parse File. {}", e.getMessage());
+        }
+    }
+
+    private void createRowOfData(Row row, String... euClinicalValues) {
+        for (int i = 0; i < euClinicalValues.length; i++) {
+            row.createCell(i).setCellValue(euClinicalValues[i]);
         }
     }
 
