@@ -26,7 +26,6 @@ public class WebScraper {
                 if (i == 4) {
                     listMap.add("N/A");
                 } else {
-                    // insert N/A for i = 4 -> whatever
                     parseRowElement(element, listMap, rowElements, i);
                 }
             }
@@ -92,7 +91,7 @@ public class WebScraper {
         return newList;
     }
 
-    private void iterateThroughTd(Elements td, List<String> listMap) {
+    protected void iterateThroughTd(Elements td, List<String> listMap) {
         for (Element element : td) {
             String elementValue = element.text();
 

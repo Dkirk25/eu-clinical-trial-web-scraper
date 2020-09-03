@@ -107,7 +107,7 @@ function uploadMultipleFiles(files) {
     console.log('Files', files);
     files.forEach(function (region) {
         region.forEach(function (file, index) {
-            console.log(`File ${index}:`, file);
+            // console.log(`File ${index}:`, file);
             formData.append('files', file);
         })
     })
