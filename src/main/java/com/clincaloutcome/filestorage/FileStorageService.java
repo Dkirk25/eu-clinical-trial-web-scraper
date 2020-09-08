@@ -2,6 +2,8 @@ package com.clincaloutcome.filestorage;
 
 import com.clincaloutcome.exception.FileStorageException;
 import com.clincaloutcome.exception.MyFileNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -19,6 +21,7 @@ import java.util.Objects;
 
 @Service
 public class FileStorageService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileStorageService.class);
 
     private final Path fileStorageLocation;
 
@@ -27,11 +30,12 @@ public class FileStorageService {
         this.fileStorageLocation = Paths.get(fileStorageProperties.getUploadDir())
                 .toAbsolutePath().normalize();
 
-        try {
-            Files.createDirectories(this.fileStorageLocation);
-        } catch (Exception ex) {
-            throw new FileStorageException("Could not create the directory where the uploaded files will be stored.", ex);
-        }
+//        try {
+//            Files.createDirectories(this.fileStorageLocation);
+//        } catch (Exception ex) {
+//            LOGGER.error("Can't create Directory because {}", ex.getMessage());
+//            throw new FileStorageException("Could not create the directory where the uploaded files will be stored", ex);
+//        }
     }
 
     public String storeFile(MultipartFile file) {

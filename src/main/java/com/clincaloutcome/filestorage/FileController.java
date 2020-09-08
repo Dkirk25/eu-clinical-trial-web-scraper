@@ -37,6 +37,7 @@ public class FileController {
     @Autowired
     private WebBuilder webBuilder;
 
+
     @PostMapping("/uploadSearchQuery")
     public UploadFileResponse submitSearchQuery(@RequestParam("searchQuery") String searchQuery, @RequestParam("pageNumber") String pageNumber) throws IOException {
         webBuilder.singleBuilder(searchQuery, pageNumber);
