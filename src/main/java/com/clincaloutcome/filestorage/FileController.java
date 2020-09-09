@@ -32,10 +32,23 @@ public class FileController {
     private static final Logger LOGGER = LoggerFactory.getLogger(FileController.class);
 
     @Autowired
+    private CloudStorageService cloudStorage;
+
+    @Autowired
     private FileStorageService fileStorageService;
 
     @Autowired
     private WebBuilder webBuilder;
+
+    @GetMapping("/buckets")
+    public ArrayList<String> getBuckets() {
+        return cloudStorage.getBuckets();
+    }
+
+    @GetMapping("/files")
+    public ArrayList<String> getFiles() {
+        return cloudStorage.getObjectsFromBucket();
+    }
 
 
     @PostMapping("/uploadSearchQuery")
