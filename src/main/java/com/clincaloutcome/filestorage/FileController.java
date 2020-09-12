@@ -41,42 +41,29 @@ public class FileController {
     private WebBuilder webBuilder;
 
     @GetMapping("/buckets")
-    public ArrayList<String> getBuckets() {
+    public List<String> getBuckets() {
         return cloudStorage.getBuckets();
     }
 
     @GetMapping("/files")
-    public ArrayList<String> getFiles() {
+    public List<String> getFiles() {
         return cloudStorage.getObjectsFromBucket();
     }
 
-
     @PostMapping("/uploadSearchQuery")
-    public UploadFileResponse submitSearchQuery(@RequestParam("searchQuery") String searchQuery, @RequestParam("pageNumber") String pageNumber) throws IOException {
-        webBuilder.singleBuilder(searchQuery, pageNumber);
-        MultipartFile multipartFileToSend = getMultipartFile();
-        String fileName = fileStorageService.storeFile(multipartFileToSend);
-
-        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/downloadFile/")
-                .path(fileName)
-                .toUriString();
-
-        return new UploadFileResponse(fileName, fileDownloadUri, multipartFileToSend.getContentType(), multipartFileToSend.getSize());
+    public UploadFileResponse submitSearchQuery(@RequestParam("searchQuery") String searchQuery, @RequestParam("pageNumber") String pageNumber) {
+        byte[] bytes = webBuilder.singleBuilder(searchQuery, pageNumber);
+        String fileName = cloudStorage.uploadObject("eu-clinical-report_" + System.currentTimeMillis() + ".xlsx", bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        String uri = "https://storage.googleapis.com/" + this.cloudStorage.getProps().getBucketName() + "/" + fileName;
+        return new UploadFileResponse(fileName, uri, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", bytes.length);
     }
 
     @PostMapping("/uploadFile")
     public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile bulk) throws IOException {
-        webBuilder.bulkBuilder(multipartFileToFile(bulk));
-        MultipartFile multipartFileToSend = getMultipartFile();
-        String fileName = fileStorageService.storeFile(multipartFileToSend);
-
-        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/downloadFile/")
-                .path(fileName)
-                .toUriString();
-
-        return new UploadFileResponse(fileName, fileDownloadUri, bulk.getContentType(), bulk.getSize());
+        byte[] bytes = webBuilder.bulkBuilder(multipartFileToFile(bulk));
+        String fileName = cloudStorage.uploadObject("eu-clinical-bulk-report_" + System.currentTimeMillis() + ".xlsx", bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        String uri = "https://storage.googleapis.com/" + this.cloudStorage.getProps().getBucketName() + "/" + fileName;
+        return new UploadFileResponse(fileName, uri, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", bytes.length);
     }
 
     @PostMapping("/uploadMultipleFiles")

@@ -21,16 +21,16 @@ public class WebBuilder {
     @Autowired
     private ClinicalPageHelper clinicalPageHelper;
 
-    public void singleBuilder(final String url, final String pages) {
+    public byte[] singleBuilder(final String url, final String pages) {
         Map<Integer, List<List<String>>> mapResults = new HashMap<>();
         List<List<String>> listOfResults = clinicalPageHelper.iterateThroughUrlAndPage(url, pages);
         mapResults.put(0, listOfResults);
-        excelBuilder.printFromEUTrialExcelFile(mapResults);
+        return excelBuilder.printFromEUTrialExcelFile(mapResults);
     }
 
-    public void bulkBuilder(final File file) {
+    public byte[] bulkBuilder(final File file) {
         Map<Integer, List<List<String>>> listOfResults = clinicalPageHelper.createUsingBulkFile(file);
-        excelBuilder.printFromEUTrialExcelFile(listOfResults);
+        return excelBuilder.printFromEUTrialExcelFile(listOfResults);
     }
 
     public void crossBuilder(final String usTrialFile, final String euTrialFile) {
