@@ -18,6 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -52,18 +54,18 @@ public class FileController {
 
     @PostMapping("/uploadSearchQuery")
     public UploadFileResponse submitSearchQuery(@RequestParam("searchQuery") String searchQuery, @RequestParam("pageNumber") String pageNumber) {
-        byte[] bytes = webBuilder.singleBuilder(searchQuery, pageNumber);
-        String fileName = cloudStorage.uploadObject("eu-clinical-report_" + System.currentTimeMillis() + ".xlsx", bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        ByteArrayOutputStream stream = webBuilder.singleBuilder(searchQuery, pageNumber);
+        String fileName = cloudStorage.uploadObject("eu-clinical-report_" + System.currentTimeMillis() + ".xlsx", stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         String uri = "https://storage.googleapis.com/" + this.cloudStorage.getProps().getBucketName() + "/" + fileName;
-        return new UploadFileResponse(fileName, uri, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", bytes.length);
+        return new UploadFileResponse(fileName, uri, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", stream.size());
     }
 
     @PostMapping("/uploadFile")
     public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile bulk) throws IOException {
-        byte[] bytes = webBuilder.bulkBuilder(multipartFileToFile(bulk));
-        String fileName = cloudStorage.uploadObject("eu-clinical-bulk-report_" + System.currentTimeMillis() + ".xlsx", bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        ByteArrayOutputStream stream = webBuilder.bulkBuilder(multipartFileToFile(bulk));
+        String fileName = cloudStorage.uploadObject("eu-clinical-bulk-report_" + System.currentTimeMillis() + ".xlsx", stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         String uri = "https://storage.googleapis.com/" + this.cloudStorage.getProps().getBucketName() + "/" + fileName;
-        return new UploadFileResponse(fileName, uri, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", bytes.length);
+        return new UploadFileResponse(fileName, uri, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", stream.size());
     }
 
     @PostMapping("/uploadMultipleFiles")
