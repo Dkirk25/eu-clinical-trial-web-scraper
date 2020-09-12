@@ -5,8 +5,8 @@ import com.clincaloutcome.model.EUClinical;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.PipedOutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,14 +21,14 @@ public class WebBuilder {
 
     @Autowired
     private ClinicalPageHelper clinicalPageHelper;
-    public ByteArrayOutputStream singleBuilder(final String url, final String pages) {
+    public PipedOutputStream singleBuilder(final String url, final String pages) {
         Map<Integer, List<List<String>>> mapResults = new HashMap<>();
         List<List<String>> listOfResults = clinicalPageHelper.iterateThroughUrlAndPage(url, pages);
         mapResults.put(0, listOfResults);
         return excelBuilder.printFromEUTrialExcelFile(mapResults);
     }
 
-    public ByteArrayOutputStream bulkBuilder(final File file) {
+    public PipedOutputStream bulkBuilder(final File file) {
         Map<Integer, List<List<String>>> listOfResults = clinicalPageHelper.createUsingBulkFile(file);
         return excelBuilder.printFromEUTrialExcelFile(listOfResults);
     }

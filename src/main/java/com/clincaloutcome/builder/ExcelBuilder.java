@@ -13,9 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PipedOutputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +24,7 @@ public
 class ExcelBuilder {
     private static final Logger LOGGER = LoggerFactory.getLogger(ExcelBuilder.class);
 
-    public ByteArrayOutputStream printFromEUTrialExcelFile(Map<Integer, List<List<String>>> listOfResults) {
+    public PipedOutputStream printFromEUTrialExcelFile(Map<Integer, List<List<String>>> listOfResults) {
         String[] columns = {"EudraCT Number", "Sponsor Protocol Number", "Start Date", "Sponsor Name", "Full Title", "Medical Condition", "Disease", "Population Age", "Gender", "Trial Protocol", "Trial Results", "Primary End Points", "Secondary End Points"};
 
         try (Workbook workbook = new XSSFWorkbook()) {
@@ -60,7 +60,7 @@ class ExcelBuilder {
             }
 
             // Write the output to a file
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            PipedOutputStream stream = new PipedOutputStream();
             workbook.write(stream);
             stream.close();
             return stream;

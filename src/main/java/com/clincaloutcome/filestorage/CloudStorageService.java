@@ -14,6 +14,9 @@ import org.springframework.util.StringUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -33,12 +36,27 @@ public class CloudStorageService {
         return this.props;
     }
 
-    public String uploadObject(String fileName, ByteArrayOutputStream stream, String contentType) {
+    public String uploadObject(String fileName, PipedOutputStream stream, String contentType) {
         String objectName = StringUtils.cleanPath(Objects.requireNonNull(fileName));
         BlobId blobId = BlobId.of(this.props.getBucketName(), objectName);
 
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(contentType).build();
-        this.storage.create(blobInfo, stream.toByteArray());
+        try (WriteChannel writer = storage.writer(blobInfo)) {
+            PipedInputStream input = new PipedInputStream(stream);
+
+            int data = input.read();
+            while(data != -1) {
+                byte[] bytes = new byte[]{(byte) data};
+                writer.write(ByteBuffer.wrap(bytes, 0, 1));
+                data = input.read();
+            }
+
+            input.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        // this.storage.create(blobInfo, stream.toByteArray());
         return objectName;
     }
 
