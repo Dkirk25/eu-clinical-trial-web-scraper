@@ -1,6 +1,7 @@
 package com.clincaloutcome.filestorage;
 
 import com.google.api.gax.paging.Page;
+import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
@@ -11,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -30,13 +33,12 @@ public class CloudStorageService {
         return this.props;
     }
 
-    public String uploadObject(String fileName, byte[] bytes, String contentType) {
+    public String uploadObject(String fileName, ByteArrayOutputStream stream, String contentType) {
         String objectName = StringUtils.cleanPath(Objects.requireNonNull(fileName));
         BlobId blobId = BlobId.of(this.props.getBucketName(), objectName);
 
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(contentType).build();
-
-        this.storage.create(blobInfo, bytes);
+        this.storage.create(blobInfo, stream.toByteArray());
         return objectName;
     }
 

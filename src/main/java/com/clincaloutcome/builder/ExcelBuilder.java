@@ -24,9 +24,8 @@ public
 class ExcelBuilder {
     private static final Logger LOGGER = LoggerFactory.getLogger(ExcelBuilder.class);
 
-    public byte[] printFromEUTrialExcelFile(Map<Integer, List<List<String>>> listOfResults) {
+    public ByteArrayOutputStream printFromEUTrialExcelFile(Map<Integer, List<List<String>>> listOfResults) {
         String[] columns = {"EudraCT Number", "Sponsor Protocol Number", "Start Date", "Sponsor Name", "Full Title", "Medical Condition", "Disease", "Population Age", "Gender", "Trial Protocol", "Trial Results", "Primary End Points", "Secondary End Points"};
-        String outputFile = "./EUClinicalTrails.xlsx";
 
         try (Workbook workbook = new XSSFWorkbook()) {
 
@@ -64,12 +63,11 @@ class ExcelBuilder {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             workbook.write(stream);
             stream.close();
-            return stream.toByteArray();
-        } catch (
-                IOException e) {
+            return stream;
+        } catch (IOException e) {
             LOGGER.error("Can't Parse File {}", e.getMessage());
         }
-        return new byte[0];
+        return null;
     }
 
     public void printEUListToExcel(List<EUClinical> euClinicalList) {
