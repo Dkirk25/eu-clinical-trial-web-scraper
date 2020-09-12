@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PipedOutputStream;
@@ -24,7 +25,7 @@ public
 class ExcelBuilder {
     private static final Logger LOGGER = LoggerFactory.getLogger(ExcelBuilder.class);
 
-    public PipedOutputStream printFromEUTrialExcelFile(Map<Integer, List<List<String>>> listOfResults) {
+    public ByteArrayOutputStream printFromEUTrialExcelFile(Map<Integer, List<List<String>>> listOfResults) {
         String[] columns = {"EudraCT Number", "Sponsor Protocol Number", "Start Date", "Sponsor Name", "Full Title", "Medical Condition", "Disease", "Population Age", "Gender", "Trial Protocol", "Trial Results", "Primary End Points", "Secondary End Points"};
 
         try (Workbook workbook = new XSSFWorkbook()) {
@@ -60,9 +61,10 @@ class ExcelBuilder {
             }
 
             // Write the output to a file
-            PipedOutputStream stream = new PipedOutputStream();
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
             workbook.write(stream);
             stream.close();
+
             return stream;
         } catch (IOException e) {
             LOGGER.error("Can't Parse File {}", e.getMessage());
@@ -103,7 +105,6 @@ class ExcelBuilder {
             FileOutputStream fileOut = new FileOutputStream("uploads/" + outputFile);
             workbook.write(fileOut);
             fileOut.close();
-
         } catch (IOException e) {
             LOGGER.error("Can't Parse File. {}", e.getMessage());
         }

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PipedInputStream;
@@ -36,13 +37,13 @@ public class CloudStorageService {
         return this.props;
     }
 
-    public String uploadObject(String fileName, PipedOutputStream stream, String contentType) {
+    public String uploadObject(String fileName, ByteArrayOutputStream stream, String contentType) {
         String objectName = StringUtils.cleanPath(Objects.requireNonNull(fileName));
         BlobId blobId = BlobId.of(this.props.getBucketName(), objectName);
 
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(contentType).build();
         try (WriteChannel writer = storage.writer(blobInfo)) {
-            PipedInputStream input = new PipedInputStream(stream);
+            ByteArrayInputStream input = new ByteArrayInputStream(stream.toByteArray());
 
             int data = input.read();
             while(data != -1) {
