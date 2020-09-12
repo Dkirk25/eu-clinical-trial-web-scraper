@@ -25,6 +25,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PipedOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -54,18 +55,18 @@ public class FileController {
 
     @PostMapping("/uploadSearchQuery")
     public UploadFileResponse submitSearchQuery(@RequestParam("searchQuery") String searchQuery, @RequestParam("pageNumber") String pageNumber) {
-        ByteArrayOutputStream stream = webBuilder.singleBuilder(searchQuery, pageNumber);
+        PipedOutputStream stream = webBuilder.singleBuilder(searchQuery, pageNumber);
         String fileName = cloudStorage.uploadObject("eu-clinical-report_" + System.currentTimeMillis() + ".xlsx", stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         String uri = "https://storage.googleapis.com/" + this.cloudStorage.getProps().getBucketName() + "/" + fileName;
-        return new UploadFileResponse(fileName, uri, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", stream.size());
+        return new UploadFileResponse(fileName, uri, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", 0);
     }
 
     @PostMapping("/uploadFile")
     public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile bulk) throws IOException {
-        ByteArrayOutputStream stream = webBuilder.bulkBuilder(multipartFileToFile(bulk));
+        PipedOutputStream stream = webBuilder.bulkBuilder(multipartFileToFile(bulk));
         String fileName = cloudStorage.uploadObject("eu-clinical-bulk-report_" + System.currentTimeMillis() + ".xlsx", stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         String uri = "https://storage.googleapis.com/" + this.cloudStorage.getProps().getBucketName() + "/" + fileName;
-        return new UploadFileResponse(fileName, uri, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", stream.size());
+        return new UploadFileResponse(fileName, uri, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", 0);
     }
 
     @PostMapping("/uploadMultipleFiles")
