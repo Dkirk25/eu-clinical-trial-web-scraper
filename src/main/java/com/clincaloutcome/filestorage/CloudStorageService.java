@@ -55,7 +55,6 @@ public class CloudStorageService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        // this.storage.create(blobInfo, stream.toByteArray());
         return objectName;
     }
 

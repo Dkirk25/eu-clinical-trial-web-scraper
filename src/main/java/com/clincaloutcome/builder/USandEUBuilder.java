@@ -18,7 +18,7 @@ import static java.util.stream.Collectors.toCollection;
 @Component
 public class USandEUBuilder {
 
-    public List<EUClinical> extractMatchesFromBothLists(String usFile, String euFile) {
+    public List<EUClinical> extractMatchesFromBothLists(File usFile, File euFile) {
         // Take list of US Clinical CSV file
         List<USClinical> usClinicalList = readExcelFile(usFile, USClinical.class);
 
@@ -37,8 +37,8 @@ public class USandEUBuilder {
         return removeUSProtocolsFromEUList(distinctEUList1, usListWithoutDuplicates);
     }
 
-    private <T> List<T> readExcelFile(String file, Class<T> requestClass) {
-        return Poiji.fromExcel(new File(file), requestClass);
+    private <T> List<T> readExcelFile(File file, Class<T> requestClass) {
+        return Poiji.fromExcel(file, requestClass);
     }
 
     private ArrayList<USClinical> getListWithoutDuplicates(List<USClinical> usClinicalList) {

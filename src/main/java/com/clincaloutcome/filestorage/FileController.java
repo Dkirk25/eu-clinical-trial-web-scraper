@@ -8,22 +8,18 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -69,28 +65,20 @@ public class FileController {
 
     @PostMapping("/uploadMultipleFiles")
     public List<UploadFileResponse> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files) throws IOException {
-        List<String> listOfFilesNames = new ArrayList<>();
+        List<File> listOfFilesNames = new ArrayList<>();
         for (MultipartFile multipartFile : files) {
             File file = new File(multipartFile.getName());
-            InputStream stream = new FileInputStream(file);
-            MockMultipartFile mockMultipartFile = new MockMultipartFile(file.getName(), file.getName(), MediaType.ALL_VALUE, stream);
-            String fileName = fileStorageService.storeFile(mockMultipartFile);
-            listOfFilesNames.add(fileName);
+            listOfFilesNames.add(file);
         }
         int count = 0;
-        String file1 = listOfFilesNames.get(count);
-        String file2 = listOfFilesNames.get(count + 1);
+        File file1 = listOfFilesNames.get(count);
+        File file2 = listOfFilesNames.get(count + 1);
 
-        // Run Excel Builder
-        webBuilder.crossBuilder(file1, file2);
+        ByteArrayOutputStream streamFile = webBuilder.crossBuilder(file1, file2);
+        String fileName = cloudStorage.uploadObject("matched-clinical-report_" + System.currentTimeMillis() + ".xlsx", streamFile, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        String uri = "https://storage.googleapis.com/" + this.cloudStorage.getProps().getBucketName() + "/" + fileName;
 
-        // Load from file name.
-        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/downloadFile/")
-                .path("MatchedEUClinicalTrails.xlsx")
-                .toUriString();
-
-        return Collections.singletonList(new UploadFileResponse("MatchedEUClinicalTrails", fileDownloadUri));
+        return Collections.singletonList(new UploadFileResponse("MatchedEUClinicalTrails", uri));
     }
 
     @GetMapping("/downloadFile/{fileName:.+}")
@@ -115,13 +103,6 @@ public class FileController {
                 .contentType(MediaType.parseMediaType(contentType))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
-    }
-
-
-    private MultipartFile getMultipartFile() throws IOException {
-        File file = new File("./uploads/EUClinicalTrails.xlsx");
-        InputStream stream = new FileInputStream(file);
-        return new MockMultipartFile("EUClinicalTrails", file.getName(), MediaType.ALL_VALUE, stream);
     }
 
     public static File multipartFileToFile(MultipartFile file) throws IOException {

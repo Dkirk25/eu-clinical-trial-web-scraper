@@ -34,8 +34,8 @@ public class WebBuilder {
         return excelBuilder.printFromEUTrialExcelFile(listOfResults);
     }
 
-    public void crossBuilder(final String usTrialFile, final String euTrialFile) {
+    public ByteArrayOutputStream crossBuilder(final File usTrialFile, final File euTrialFile) {
         List<EUClinical> euList = usAndEUBuilder.extractMatchesFromBothLists(usTrialFile, euTrialFile);
-        excelBuilder.printEUListToExcel(euList);
+        return excelBuilder.printEUListToExcel(euList);
     }
 }

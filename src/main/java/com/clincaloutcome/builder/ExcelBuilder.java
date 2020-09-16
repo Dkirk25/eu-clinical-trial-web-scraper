@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -71,10 +70,9 @@ class ExcelBuilder {
         return null;
     }
 
-    public void printEUListToExcel(List<EUClinical> euClinicalList) {
+    public ByteArrayOutputStream printEUListToExcel(List<EUClinical> euClinicalList) {
         String[] columns = {"EudraCT Number", "Sponsor Protocol Number", "Start Date", "Sponsor Name", "Full Title", "Medical Condition", "Disease", "Population Age", "Gender", "Trial Protocol", "Trial Results", "Primary End Points", "Secondary End Points"};
 
-        String outputFile = "./MatchedEUClinicalTrails.xlsx";
         try (Workbook workbook = new XSSFWorkbook()) {
             CellStyle headerCellStyle = createSheetStyle(workbook);
 
@@ -101,12 +99,14 @@ class ExcelBuilder {
             }
 
             // Write the output to a file
-            FileOutputStream fileOut = new FileOutputStream("uploads/" + outputFile);
-            workbook.write(fileOut);
-            fileOut.close();
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            workbook.write(stream);
+            stream.close();
+            return stream;
         } catch (IOException e) {
             LOGGER.error("Can't Parse File. {}", e.getMessage());
         }
+        return null;
     }
 
     private void createRowOfData(Row row, String... euClinicalValues) {
@@ -126,14 +126,6 @@ class ExcelBuilder {
         CellStyle headerCellStyle = workbook.createCellStyle();
         headerCellStyle.setFont(headerFont);
         return headerCellStyle;
-    }
-
-    private String nullStringReplacement(List<String> value, int i) {
-        if (value.isEmpty()) {
-            return "none";
-        } else {
-            return value.get(i);
-        }
     }
 
     private void createExcelHeaders(String[] columns, CellStyle headerCellStyle, Sheet sheet) {
