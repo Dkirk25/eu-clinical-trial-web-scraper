@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.PipedOutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +21,7 @@ public class WebBuilder {
 
     @Autowired
     private ClinicalPageHelper clinicalPageHelper;
+
     public ByteArrayOutputStream singleBuilder(final String url, final String pages) {
         Map<Integer, List<List<String>>> mapResults = new HashMap<>();
         List<List<String>> listOfResults = clinicalPageHelper.iterateThroughUrlAndPage(url, pages);

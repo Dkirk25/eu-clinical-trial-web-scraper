@@ -15,8 +15,6 @@ import org.springframework.util.StringUtils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +44,7 @@ public class CloudStorageService {
             ByteArrayInputStream input = new ByteArrayInputStream(stream.toByteArray());
 
             int data = input.read();
-            while(data != -1) {
+            while (data != -1) {
                 byte[] bytes = new byte[]{(byte) data};
                 writer.write(ByteBuffer.wrap(bytes, 0, 1));
                 data = input.read();
@@ -54,9 +52,9 @@ public class CloudStorageService {
 
             input.close();
 
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         // this.storage.create(blobInfo, stream.toByteArray());
         return objectName;
     }
