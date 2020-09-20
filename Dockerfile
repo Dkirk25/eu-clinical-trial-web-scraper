@@ -1,23 +1,18 @@
-# For Java 8, try this
+#
+# Build stage
+#
+FROM maven:3.6.0-jdk-8-slim AS build
+COPY src /opt/apps/eu-clinical-trial-web-scraper/src
+COPY pom.xml /opt/apps/eu-clinical-trial-web-scraper
+RUN mvn -f /opt/apps/eu-clinical-trial-web-scraper/pom.xml clean package
+
+#
+# Package stage
+#
 FROM openjdk:8-jdk-alpine
-# For Java 11, try this
-#FROM adoptopenjdk/openjdk11:alpine-jre
-
-# Refer to Maven build -> finalName
-ARG JAR_FILE=target/clinical-trial-web-application-2.1-SNAPSHOT.jar
-
-# cd /opt/app
-WORKDIR /opt/apps/eu-clinical-trial-web-scraper
-
-
-# cp target/spring-boot-web.jar /opt/app/app.jar
-COPY ${JAR_FILE} clinical-trial-web-application-2.1-SNAPSHOT.jar
-
+COPY --from=build /opt/apps/eu-clinical-trial-web-scraper/target/clinical-trial-web-application-2.1-SNAPSHOT.jar clinical-trial-web-application-2.1-SNAPSHOT.jar
 EXPOSE 8080
-
-# java -jar /opt/app/app.jar
 ENTRYPOINT ["java","-jar","clinical-trial-web-application-2.1-SNAPSHOT.jar"]
-
 
 #docker build . -t clinicaltrialapp
 #docker run -it -d -p 8080:8080 clinicaltrialapp:latest
