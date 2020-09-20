@@ -2,6 +2,8 @@
 .DS_Store
 target/
 
+scripts/clinical-trial-app.sh
+
 ./uploads/
 
 /bulk.txt
