@@ -4,6 +4,9 @@ target/
 
 ./uploads/
 
+/bulk.txt
+
+uploads/
 service-account.json
 
 .iml

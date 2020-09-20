@@ -20,6 +20,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -69,26 +70,31 @@ public class FileController {
     public List<UploadFileResponse> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files) throws IOException {
         List<String> listOfFilesNames = new ArrayList<>();
         for (MultipartFile multipartFile : files) {
-            File file = new File(multipartFile.getName());
-            InputStream stream = new FileInputStream(file);
-            MockMultipartFile mockMultipartFile = new MockMultipartFile(file.getName(), file.getName(), MediaType.ALL_VALUE, stream);
-            String fileName = fileStorageService.storeFile(mockMultipartFile);
-            listOfFilesNames.add(fileName);
+            File file = multipartFileToFile(multipartFile);
+            if(file != null) {
+                InputStream stream = new FileInputStream(file);
+                MockMultipartFile mockMultipartFile = new MockMultipartFile(file.getName(), file.getName(), MediaType.ALL_VALUE, stream);
+                String fileName = fileStorageService.storeFile(mockMultipartFile);
+                listOfFilesNames.add(fileName);
+            }
         }
-        int count = 0;
-        String file1 = listOfFilesNames.get(count);
-        String file2 = listOfFilesNames.get(count + 1);
+        if(!listOfFilesNames.isEmpty()) {
+            int count = 0;
+            String file1 = listOfFilesNames.get(count);
+            String file2 = listOfFilesNames.get(count + 1);
 
-        // Run Excel Builder
-        webBuilder.crossBuilder(file1, file2);
+            // Run Excel Builder
+            webBuilder.crossBuilder(file1, file2);
 
-        // Load from file name.
-        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/downloadFile/")
-                .path("MatchedEUClinicalTrails.xlsx")
-                .toUriString();
+            // Load from file name.
+            String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                    .path("/downloadFile/")
+                    .path("MatchedEUClinicalTrails.xlsx")
+                    .toUriString();
 
-        return Collections.singletonList(new UploadFileResponse("MatchedEUClinicalTrails", fileDownloadUri));
+            return Collections.singletonList(new UploadFileResponse("MatchedEUClinicalTrails", fileDownloadUri));
+        }
+        throw new FileNotFoundException("There are no files found!");
     }
 
     @GetMapping("/downloadFile/{fileName:.+}")
