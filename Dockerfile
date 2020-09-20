@@ -7,8 +7,7 @@ FROM openjdk:8-jdk-alpine
 ARG JAR_FILE=target/clinical-trial-web-application-2.1-SNAPSHOT.jar
 
 # cd /opt/app
-WORKDIR /opt/apps/clinical-trial-web-application
-
+WORKDIR /opt/apps/eu-clinical-trial-web-scraper
 
 
 # cp target/spring-boot-web.jar /opt/app/app.jar
