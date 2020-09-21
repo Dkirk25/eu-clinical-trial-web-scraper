@@ -1,7 +1,7 @@
 #
 # Build stage
 #
-FROM maven:3.6.0-jdk-8-slim AS build
+FROM maven:3.6.0-jdk-8 AS build
 COPY src /opt/apps/eu-clinical-trial-web-scraper/src
 COPY pom.xml /opt/apps/eu-clinical-trial-web-scraper
 RUN mvn -f /opt/apps/eu-clinical-trial-web-scraper/pom.xml clean package
