@@ -24,7 +24,7 @@
         <jsoup.version>1.12.1</jsoup.version>
         <apache.commons.csv.version>1.7</apache.commons.csv.version>
         <poiji.version>1.21.0</poiji.version>
-        <junit.version>4.12</junit.version>
+        <junit.version>4.13.1</junit.version>
         <maven.shade.version>2.3</maven.shade.version>
         <maven.compiler.version>3.8.0</maven.compiler.version>
         <slf4j.logger.version>1.7.26</slf4j.logger.version>
