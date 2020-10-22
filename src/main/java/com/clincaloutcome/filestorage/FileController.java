@@ -4,6 +4,7 @@ import com.clincaloutcome.builder.WebBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
@@ -38,47 +38,43 @@ public class FileController {
     @Autowired
     private WebBuilder webBuilder;
 
+    @Value("${spring.url.response.name}")
+    private String responseUrl;
+
     @PostMapping("/uploadSearchQuery")
-    public UploadFileResponse submitSearchQuery(@RequestParam("searchQuery") String searchQuery, @RequestParam("pageNumber") String pageNumber) throws IOException {
+    public UploadFileResponse submitSearchQuery(HttpServletRequest request, @RequestParam("searchQuery") String searchQuery, @RequestParam("pageNumber") String pageNumber) throws IOException {
         webBuilder.singleBuilder(searchQuery, pageNumber);
         MultipartFile multipartFileToSend = getMultipartFile();
         String fileName = fileStorageService.storeFile(multipartFileToSend);
+        String fileUrl = createDownloadUrl(request, fileName);
 
-        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/downloadFile/")
-                .path(fileName)
-                .toUriString();
-
-        return new UploadFileResponse(fileName, fileDownloadUri, multipartFileToSend.getContentType(), multipartFileToSend.getSize());
+        return new UploadFileResponse(fileName, fileUrl, multipartFileToSend.getContentType(), multipartFileToSend.getSize());
     }
 
     @PostMapping("/uploadFile")
-    public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile bulk) throws IOException {
+    public UploadFileResponse uploadFile(HttpServletRequest request, @RequestParam("file") MultipartFile bulk) throws IOException {
         webBuilder.bulkBuilder(multipartFileToFile(bulk));
         MultipartFile multipartFileToSend = getMultipartFile();
         String fileName = fileStorageService.storeFile(multipartFileToSend);
 
-        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/downloadFile/")
-                .path(fileName)
-                .toUriString();
+        String fileUrl = createDownloadUrl(request, fileName);
 
-        return new UploadFileResponse(fileName, fileDownloadUri, bulk.getContentType(), bulk.getSize());
+        return new UploadFileResponse(fileName, fileUrl, bulk.getContentType(), bulk.getSize());
     }
 
     @PostMapping("/uploadMultipleFiles")
-    public List<UploadFileResponse> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files) throws IOException {
+    public List<UploadFileResponse> uploadMultipleFiles(HttpServletRequest request, @RequestParam("files") MultipartFile[] files) throws IOException {
         List<String> listOfFilesNames = new ArrayList<>();
         for (MultipartFile multipartFile : files) {
             File file = multipartFileToFile(multipartFile);
-            if(file != null) {
+            if (file != null) {
                 InputStream stream = new FileInputStream(file);
                 MockMultipartFile mockMultipartFile = new MockMultipartFile(file.getName(), file.getName(), MediaType.ALL_VALUE, stream);
                 String fileName = fileStorageService.storeFile(mockMultipartFile);
                 listOfFilesNames.add(fileName);
             }
         }
-        if(!listOfFilesNames.isEmpty()) {
+        if (!listOfFilesNames.isEmpty()) {
             int count = 0;
             String file1 = listOfFilesNames.get(count);
             String file2 = listOfFilesNames.get(count + 1);
@@ -86,13 +82,9 @@ public class FileController {
             // Run Excel Builder
             webBuilder.crossBuilder(file1, file2);
 
-            // Load from file name.
-            String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                    .path("/downloadFile/")
-                    .path("MatchedEUClinicalTrails.xlsx")
-                    .toUriString();
+            String fileUrl = createDownloadUrl(request, "MatchedEUClinicalTrails.xlsx");
 
-            return Collections.singletonList(new UploadFileResponse("MatchedEUClinicalTrails", fileDownloadUri));
+            return Collections.singletonList(new UploadFileResponse("MatchedEUClinicalTrails", fileUrl));
         }
         throw new FileNotFoundException("There are no files found!");
     }
@@ -119,6 +111,16 @@ public class FileController {
                 .contentType(MediaType.parseMediaType(contentType))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
+    }
+
+    private String createDownloadUrl(HttpServletRequest request, String fileName) {
+        String fileUrl;
+        if (request.getServerName().contains("localhost")) {
+            fileUrl = responseUrl;
+        } else {
+            fileUrl = request.getServerName();
+        }
+        return fileUrl + "/downloadFile/" + fileName;
     }
 
 
