@@ -1,21 +1,70 @@
-# eu-clinical-trial-web-scraper
-Scrapes all the info from a search on https://www.clinicaltrialsregister.eu
+# Eu-Clinical-Trial-Web-Scraper
 
-Ex.) https://www.clinicaltrialsregister.eu/ctr-search/search?query=amyotrophic+lateral+sclerosis&age=adult&phase=phase-two&phase=phase-three&phase=phase-four&dateFrom=2010-01-01&dateTo=2021-01-01
+## About
+* Scrapes all the info from a search on https://www.clinicaltrialsregister.eu
+* [GO HERE](http://eu-clinical.donkirk.net/)  
 
-copy the url into the UI and select the number of pages you want to go through.
+## Single Search
+Copy the link from the search results from the clinical trials register page.  
+[Example](https://www.clinicaltrialsregister.eu/ctr-search/search?query=amyotrophic+lateral+sclerosis&age=adult&phase=phase-two&phase=phase-three&phase=phase-four&dateFrom=2010-01-01&dateTo=2021-01-01)  
 
-Here is the UI to search for trials and convert them to an excel sheet.
-https://eu-clinical-trial-converter.herokuapp.com/
-
+![Single Search](https://github.com/Dkirk25/eu-clinical-trial-web-scraper/tree/master/pictures/single_search.JPG "Single Search Example")
 
 --------------------------------------------------------------------------------
+## Multiple Searches
+Similar to the Single search, Multiple Search option allows the user to search more than one search in one go.
+You need a text file(.txt) with the same parameters as the single search.  
 
-In txt file you can put multiple searches... Paste the url (without the page number) and then the page number next to it..
+![Single Search](https://github.com/Dkirk25/eu-clinical-trial-web-scraper/tree/master/pictures/single_search.JPG "Multiple Search Example")
 
-Example.) https://www.clinicaltrialsregister.eu/ctr-search/search?query=amyotrophic+lateral+sclerosis&age=adult&phase=phase-two&phase=phase-three&phase=phase-four&dateFrom=2010-01-01&dateTo=2021-01-01 3
+--------------------------------------------------------------------------------
+## Cross Search
+* Two excel files are required
+* Removes any records from the EU excel file that matches the US excel file
+  * Compares on US otherId and EU SponsorProtocolNumber
+  
+Below these headers are **required!**
 
-You see the url and at the end is the page number...
+#### EU Excel Headers
+* EudraCT Number
+* Sponsor Protocol Number
+* Start Date
+* Sponsor Name
+* Full Title
+* Medical Condition
+* Disease
+* Population Age
+* Gender
+* Trial Protocol
+* Trial Results
+* Primary End Points
+* Secondary End Points
 
-
-In the project, UsChildren and NewEUListChildren are there for examples... They will create a merged cross referenced list.
+#### US Excel Headers
+* rank 
+* ntcNumber 
+* title 
+* acronym 
+* status 
+* studyResults 
+* condition 
+* intervention 
+* outcomeMeasure 
+* sponsor 
+* gender 
+* age 
+* phases 
+* enrollment
+* fundedBy
+* studyType
+* studyDesign
+* otherId
+* startDate
+* primaryCompletionDate
+* completionDate
+* firstPosted
+* resultFirstPosted
+* lastUpdatePosted
+* locations
+* studyDocuments
+* url

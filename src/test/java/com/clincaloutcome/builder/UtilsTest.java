@@ -12,4 +12,50 @@ public class UtilsTest {
         String actual = Utils.trailParser(exampleString, "E.5.1 Primary end point");
         Assert.assertEquals(expected, actual);
     }
+
+    @Test
+    public void nullCheck_EmptyValueReturnsNA() {
+        String emptyValue = "";
+        Assert.assertEquals("N/A", Utils.nullCheck(emptyValue));
+    }
+
+    @Test
+    public void nullCheck_NotEmptyValue() {
+        String emptyValue = "Test";
+        Assert.assertEquals("Test", Utils.nullCheck(emptyValue));
+    }
+
+    @Test
+    public void isValidFileFormat_EndsWithXlsx() {
+        String file = "test.xlsx";
+        String type = "xlsx";
+        Assert.assertTrue(Utils.isValidFileFormat(file, type));
+    }
+
+    @Test
+    public void isValidFileFormat_BadEnding() {
+        String file = "test.xlsx";
+        String type = "123";
+        Assert.assertFalse(Utils.isValidFileFormat(file, type));
+    }
+
+    @Test
+    public void isValidFileFormat_FileIsEmpty() {
+        String file = "";
+        String type = "123";
+        Assert.assertFalse(Utils.isValidFileFormat(file, type));
+    }
+
+    @Test
+    public void isValidFileFormat_FileIsNull() {
+        String file = null;
+        String type = "123";
+        Assert.assertFalse(Utils.isValidFileFormat(file, type));
+    }
+
+    @Test
+    public void wordParser_removeColons() {
+        String word = "This : is:a: test:";
+        Assert.assertEquals("isa test", Utils.wordParser(word));
+    }
 }

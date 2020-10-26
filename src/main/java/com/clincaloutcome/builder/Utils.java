@@ -35,6 +35,6 @@ public class Utils {
     }
 
     public static boolean isValidFileFormat(String file, String fileType) {
-        return !file.isEmpty() && file.endsWith(fileType);
+        return StringUtils.isNotEmpty(file) && StringUtils.endsWith(file, fileType);
     }
 }
