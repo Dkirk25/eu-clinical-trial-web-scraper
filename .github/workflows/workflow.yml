@@ -1,12 +1,15 @@
-on: [ push ]
-steps:
-  - uses: codecov/codecov-action@v1.0.14
-    with:
-      token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
-      file: ./coverage.xml # optional
-      files: ./coverage1.xml,./coverage2.xml # optional
-      flags: unittests # optional
-      name: codecov-umbrella # optional
-      fail_ci_if_error: true # optional (default = false)
-      verbose: true # optional (default = false)
+name: codacy-coverage-reporter
 
+on: [ "push" ]
+
+jobs:
+  codacy-coverage-reporter:
+    runs-on: ubuntu-latest
+    name: codacy-coverage-reporter
+    steps:
+      - uses: actions/checkout@master
+      - name: Run codacy-coverage-reporter
+        uses: codacy/codacy-coverage-reporter-action@master
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          coverage-reports: cobertura.xml
