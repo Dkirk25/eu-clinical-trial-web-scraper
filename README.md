@@ -8,14 +8,17 @@
 Copy the link from the search results from the clinical trials register page.  
 [Example](https://www.clinicaltrialsregister.eu/ctr-search/search?query=amyotrophic+lateral+sclerosis&age=adult&phase=phase-two&phase=phase-three&phase=phase-four&dateFrom=2010-01-01&dateTo=2021-01-01)  
 
-![Single Search](https://github.com/Dkirk25/eu-clinical-trial-web-scraper/tree/master/pictures/single_search.JPG "Single Search Example")
+![Single Search](pictures/single_search.JPG)
 
 --------------------------------------------------------------------------------
 ## Multiple Searches
 Similar to the Single search, Multiple Search option allows the user to search more than one search in one go.
 You need a text file(.txt) with the same parameters as the single search.  
 
-![Single Search](https://github.com/Dkirk25/eu-clinical-trial-web-scraper/tree/master/pictures/single_search.JPG "Multiple Search Example")
+Each line has the search url and page number  
+In the example below you see the search url and the page number "1" because thats how many pages I want to scrape per request.
+
+![Multiple Search](pictures/multiple_search.JPG "Multiple Search Example")
 
 --------------------------------------------------------------------------------
 ## Cross Search
