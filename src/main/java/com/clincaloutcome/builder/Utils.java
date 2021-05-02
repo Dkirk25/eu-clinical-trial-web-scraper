@@ -27,7 +27,7 @@ public class Utils {
 
     public static String wordParser(String word) {
         int colon = word.indexOf(':');
-        String toReplace = word.substring(0, colon);
+        var toReplace = word.substring(0, colon);
         word = word.replaceAll(toReplace, "");
         word = word.replace(":", "");
         word = word.replaceAll("\\*", "");

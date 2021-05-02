@@ -12,14 +12,15 @@ import java.util.Map;
 
 @Component
 public class WebBuilder {
-    @Autowired
-    private ExcelBuilder excelBuilder;
+    private final ExcelBuilder excelBuilder;
+    private final USandEUBuilder usAndEUBuilder;
+    private final ClinicalPageHelper clinicalPageHelper;
 
-    @Autowired
-    private USandEUBuilder usAndEUBuilder;
-
-    @Autowired
-    private ClinicalPageHelper clinicalPageHelper;
+    public WebBuilder(@Autowired ExcelBuilder excelBuilder, @Autowired USandEUBuilder usAndEUBuilder, @Autowired ClinicalPageHelper clinicalPageHelper) {
+        this.excelBuilder = excelBuilder;
+        this.usAndEUBuilder = usAndEUBuilder;
+        this.clinicalPageHelper = clinicalPageHelper;
+    }
 
     public void singleBuilder(final String url, final String pages) {
         Map<Integer, List<List<String>>> mapResults = new HashMap<>();

@@ -19,10 +19,10 @@ public class WebScraper {
 
     public List<String> iterateRowInTable(Element element) {
         List<String> listMap = new ArrayList<>();
-        Elements rowElements = element.select("tr");
+        var rowElements = element.select("tr");
 
         if (rowElements.size() == 8) {
-            for (int i = 0; i < rowElements.size(); i++) {
+            for (var i = 0; i < rowElements.size(); i++) {
                 if (i == 4) {
                     listMap.add("N/A");
                 } else {
@@ -31,7 +31,7 @@ public class WebScraper {
                 }
             }
         } else {
-            for (int i = 0; i < rowElements.size(); i++) {
+            for (var i = 0; i < rowElements.size(); i++) {
                 if (i != 4 && i != 5) {
                     parseRowElement(element, listMap, rowElements, i);
                 }
@@ -56,12 +56,12 @@ public class WebScraper {
 
     private List<String> formatResults(List<String> listMap) {
         List<String> newList = new ArrayList<>();
-        int count = 0;
-        StringBuilder combinedDiseaseDetail = new StringBuilder();
+        var count = 0;
+        var combinedDiseaseDetail = new StringBuilder();
         List<String> listOfDiseases = new ArrayList<>();
 
-        for (int i = 0; i < listMap.size(); i++) {
-            String value = StringUtils.trim(listMap.get(i));
+        for (var i = 0; i < listMap.size(); i++) {
+            var value = StringUtils.trim(listMap.get(i));
             if (i > 5 && i < listMap.size() - 4) {
                 if (count < 5) {
                     List<String> listOfDiseaseTitles = Arrays.asList("Version", "SOC Term", "Classification Code", "Term", "Level");
@@ -77,7 +77,7 @@ public class WebScraper {
                 }
             } else {
                 if (i == listMap.size() - 4) {
-                    StringBuilder disease = new StringBuilder();
+                    var disease = new StringBuilder();
                     for (String diseaseDetail : listOfDiseases) {
                         disease.append(diseaseDetail).append("\n");
                     }

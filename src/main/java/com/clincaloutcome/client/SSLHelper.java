@@ -22,7 +22,7 @@ public class SSLHelper {
     }
 
     private static SSLSocketFactory socketFactory() {
-        TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+        var trustAllCerts = new TrustManager[]{new X509TrustManager() {
             public java.security.cert.X509Certificate[] getAcceptedIssuers() {
                 return new X509Certificate[0];
             }
@@ -37,7 +37,7 @@ public class SSLHelper {
         }};
 
         try {
-            SSLContext sslContext = SSLContext.getInstance("SSL");
+            var sslContext = SSLContext.getInstance("SSL");
             sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
 
             return sslContext.getSocketFactory();

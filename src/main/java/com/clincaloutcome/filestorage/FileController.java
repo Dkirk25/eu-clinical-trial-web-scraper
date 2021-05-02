@@ -44,7 +44,7 @@ public class FileController {
     @PostMapping("/uploadSearchQuery")
     public UploadFileResponse submitSearchQuery(HttpServletRequest request, @RequestParam("searchQuery") String searchQuery, @RequestParam("pageNumber") String pageNumber) throws IOException {
         webBuilder.singleBuilder(searchQuery, pageNumber);
-        MultipartFile multipartFileToSend = getMultipartFile();
+        var multipartFileToSend = getMultipartFile();
         String fileName = fileStorageService.storeFile(multipartFileToSend);
         String fileUrl = createDownloadUrl(request, fileName);
 
@@ -54,7 +54,7 @@ public class FileController {
     @PostMapping("/uploadFile")
     public UploadFileResponse uploadFile(HttpServletRequest request, @RequestParam("file") MultipartFile bulk) throws IOException {
         webBuilder.bulkBuilder(multipartFileToFile(bulk));
-        MultipartFile multipartFileToSend = getMultipartFile();
+        var multipartFileToSend = getMultipartFile();
         String fileName = fileStorageService.storeFile(multipartFileToSend);
 
         String fileUrl = createDownloadUrl(request, fileName);
@@ -66,16 +66,16 @@ public class FileController {
     public List<UploadFileResponse> uploadMultipleFiles(HttpServletRequest request, @RequestParam("files") MultipartFile[] files) throws IOException {
         List<String> listOfFilesNames = new ArrayList<>();
         for (MultipartFile multipartFile : files) {
-            File file = multipartFileToFile(multipartFile);
+            var file = multipartFileToFile(multipartFile);
             if (file != null) {
                 InputStream stream = new FileInputStream(file);
-                MockMultipartFile mockMultipartFile = new MockMultipartFile(file.getName(), file.getName(), MediaType.ALL_VALUE, stream);
+                var mockMultipartFile = new MockMultipartFile(file.getName(), file.getName(), MediaType.ALL_VALUE, stream);
                 String fileName = fileStorageService.storeFile(mockMultipartFile);
                 listOfFilesNames.add(fileName);
             }
         }
         if (!listOfFilesNames.isEmpty()) {
-            int count = 0;
+            var count = 0;
             String file1 = listOfFilesNames.get(count);
             String file2 = listOfFilesNames.get(count + 1);
 
@@ -92,7 +92,7 @@ public class FileController {
     @GetMapping("/downloadFile/{fileName:.+}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request) {
         // Load file as Resource
-        Resource resource = fileStorageService.loadFileAsResource(fileName);
+        var resource = fileStorageService.loadFileAsResource(fileName);
 
         // Try to determine file's content type
         String contentType = null;
@@ -125,16 +125,16 @@ public class FileController {
 
 
     private MultipartFile getMultipartFile() throws IOException {
-        File file = new File("./uploads/EUClinicalTrails.xlsx");
+        var file = new File("./uploads/EUClinicalTrails.xlsx");
         InputStream stream = new FileInputStream(file);
         return new MockMultipartFile("EUClinicalTrails", file.getName(), MediaType.ALL_VALUE, stream);
     }
 
     public static File multipartFileToFile(MultipartFile file) throws IOException {
         if (file != null && file.getOriginalFilename() != null) {
-            File convFile = new File(file.getOriginalFilename());
+            var convFile = new File(file.getOriginalFilename());
             if (convFile.createNewFile()) {
-                try (FileOutputStream fos = new FileOutputStream(convFile)) {
+                try (var fos = new FileOutputStream(convFile)) {
                     fos.write(file.getBytes());
                 } catch (Exception e) {
                     LOGGER.error("Cannot write file.", e);

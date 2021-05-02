@@ -1,11 +1,8 @@
 package com.clincaloutcome.builder;
 
 import com.clincaloutcome.model.EUClinical;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -24,28 +21,28 @@ class ExcelBuilder {
     private static final Logger LOGGER = LoggerFactory.getLogger(ExcelBuilder.class);
 
     public void printFromEUTrialExcelFile(Map<Integer, List<List<String>>> listOfResults) {
-        String[] columns = {"EudraCT Number", "Sponsor Protocol Number", "Start Date", "Sponsor Name", "Full Title", "Medical Condition", "Disease", "Population Age", "Gender", "Trial Protocol", "Trial Results", "Primary End Points", "Secondary End Points"};
-        String outputFile = "./EUClinicalTrails.xlsx";
+        var columns = new String[]{"EudraCT Number", "Sponsor Protocol Number", "Start Date", "Sponsor Name", "Full Title", "Medical Condition", "Disease", "Population Age", "Gender", "Trial Protocol", "Trial Results", "Primary End Points", "Secondary End Points"};
+        var outputFile = "./EUClinicalTrails.xlsx";
 
         try (Workbook workbook = new XSSFWorkbook()) {
 
             // Create a Font for styling header cells
-            CellStyle headerCellStyle = createSheetStyle(workbook);
+            var headerCellStyle = createSheetStyle(workbook);
 
             // Create a Sheet
-            Sheet sheet = workbook.createSheet("EUClinical");
+            var sheet = workbook.createSheet("EUClinical");
 
             // Create a Row
             createExcelHeaders(columns, headerCellStyle, sheet);
 
-            int rowNum = 1;
+            var rowNum = 1;
 
-            for (int i = 0; i < listOfResults.size(); i++) {
+            for (var i = 0; i < listOfResults.size(); i++) {
                 List<List<String>> firstFile = listOfResults.get(0);
                 for (List<String> trialData : firstFile) {
-                    int columnCount = 0;
+                    var columnCount = 0;
 
-                    Row row = sheet.createRow(rowNum++);
+                    var row = sheet.createRow(rowNum++);
 
                     row.createCell(0).setCellValue(trialData.get(columnCount));
                     row.createCell(1).setCellValue(trialData.get(columnCount + 1));
@@ -64,12 +61,12 @@ class ExcelBuilder {
             }
 
             // Resize all columns to fit the content size
-            for (int i = 0; i < columns.length; i++) {
+            for (var i = 0; i < columns.length; i++) {
                 sheet.autoSizeColumn(i);
             }
 
             // Write the output to a file
-            FileOutputStream fileOut = new FileOutputStream("uploads/" + outputFile);
+            var fileOut = new FileOutputStream("uploads/" + outputFile);
             workbook.write(fileOut);
             fileOut.close();
         } catch (
@@ -80,22 +77,22 @@ class ExcelBuilder {
     }
 
     public void printEUListToExcel(List<EUClinical> euClinicalList) {
-        String[] columns = {"EudraCT Number", "Sponsor Protocol Number", "Start Date", "Sponsor Name", "Full Title", "Medical Condition", "Disease", "Population Age", "Gender", "Trial Protocol", "Trial Results", "Primary End Points", "Secondary End Points"};
+        var columns = new String[]{"EudraCT Number", "Sponsor Protocol Number", "Start Date", "Sponsor Name", "Full Title", "Medical Condition", "Disease", "Population Age", "Gender", "Trial Protocol", "Trial Results", "Primary End Points", "Secondary End Points"};
 
-        String outputFile = "./MatchedEUClinicalTrails.xlsx";
+        var outputFile = "./MatchedEUClinicalTrails.xlsx";
         try (Workbook workbook = new XSSFWorkbook()) {
-            CellStyle headerCellStyle = createSheetStyle(workbook);
+            var headerCellStyle = createSheetStyle(workbook);
 
             // Create a Sheet
-            Sheet sheet = workbook.createSheet("MatchedEUClinical");
+            var sheet = workbook.createSheet("MatchedEUClinical");
 
             // Create a Row
             createExcelHeaders(columns, headerCellStyle, sheet);
 
-            int rowNum = 1;
+            var rowNum = 1;
 
             for (EUClinical euClinical : euClinicalList) {
-                Row row = sheet.createRow(rowNum++);
+                var row = sheet.createRow(rowNum++);
 
                 row.createCell(0).setCellValue(euClinical.getEudraNumber());
                 row.createCell(1).setCellValue(euClinical.getSponsorProtocolNumber());
@@ -113,12 +110,12 @@ class ExcelBuilder {
             }
 
             // Resize all columns to fit the content size
-            for (int i = 0; i < columns.length; i++) {
+            for (var i = 0; i < columns.length; i++) {
                 sheet.autoSizeColumn(i);
             }
 
             // Write the output to a file
-            FileOutputStream fileOut = new FileOutputStream("uploads/" + outputFile);
+            var fileOut = new FileOutputStream("uploads/" + outputFile);
             workbook.write(fileOut);
             fileOut.close();
 
@@ -129,31 +126,23 @@ class ExcelBuilder {
 
     private CellStyle createSheetStyle(Workbook workbook) {
         // Create a Font for styling header cells
-        Font headerFont = workbook.createFont();
+        var headerFont = workbook.createFont();
         headerFont.setBold(true);
         headerFont.setFontHeightInPoints((short) 14);
         headerFont.setColor(IndexedColors.BLACK.getIndex());
 
         // Create a CellStyle with the font
-        CellStyle headerCellStyle = workbook.createCellStyle();
+        var headerCellStyle = workbook.createCellStyle();
         headerCellStyle.setFont(headerFont);
         return headerCellStyle;
     }
 
-    private String nullStringReplacement(List<String> value, int i) {
-        if (value.isEmpty()) {
-            return "none";
-        } else {
-            return value.get(i);
-        }
-    }
-
     private void createExcelHeaders(String[] columns, CellStyle headerCellStyle, Sheet sheet) {
-        Row headerRow = sheet.createRow(0);
+        var headerRow = sheet.createRow(0);
 
         // Create cells
-        for (int i = 0; i < columns.length; i++) {
-            Cell cell = headerRow.createCell(i);
+        for (var i = 0; i < columns.length; i++) {
+            var cell = headerRow.createCell(i);
             cell.setCellValue(columns[i]);
             cell.setCellStyle(headerCellStyle);
         }

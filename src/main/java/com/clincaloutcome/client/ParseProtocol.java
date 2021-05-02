@@ -52,7 +52,7 @@ public class ParseProtocol {
     }
 
     protected String addProtocolToMap(String specificProtocol, List<String> listOfProtocols) {
-        String tempProtocol = "";
+        var tempProtocol = "";
         for (String word : listOfProtocols) {
             if (word.contains(specificProtocol)) {
                 tempProtocol = word;

@@ -27,8 +27,8 @@ public class ClinicalPageHelper {
     public List<List<String>> iterateThroughUrlAndPage(String url, String pages) {
         if (!StringUtils.isEmpty(url) && !StringUtils.isEmpty(pages)) {
             try {
-                int i = 1;
-                int pageCount = Integer.parseInt(pages);
+                var i = 1;
+                var pageCount = Integer.parseInt(pages);
 
                 List<List<String>> mapOfValues = new ArrayList<>();
 
@@ -55,7 +55,7 @@ public class ClinicalPageHelper {
     }
 
     public Map<Integer, List<List<String>>> createUsingBulkFile(File bulk) {
-        try (BufferedReader br = new BufferedReader(new FileReader(bulk))) {
+        try (var br = new BufferedReader(new FileReader(bulk))) {
             String input;
             Map<Integer, List<List<String>>> totalResults = new HashMap<>();
             Integer count = 0;
