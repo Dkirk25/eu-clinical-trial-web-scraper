@@ -21,7 +21,7 @@
         <spring.boot.maven.plugin.version>2.1.4.RELEASE</spring.boot.maven.plugin.version>
         <apache.version.poi>4.1.0</apache.version.poi>
         <apache.commons.lang.version>3.9</apache.commons.lang.version>
-        <jsoup.version>1.12.1</jsoup.version>
+        <jsoup.version>1.14.2</jsoup.version>
         <apache.commons.csv.version>1.7</apache.commons.csv.version>
         <poiji.version>1.21.0</poiji.version>
         <junit.version>4.13.1</junit.version>
