@@ -120,7 +120,7 @@ public class FileController {
         } else {
             fileUrl = request.getServerName();
         }
-        return fileUrl + "/downloadFile/" + fileName;
+        return responseUrl + "/downloadFile/" + fileName;
     }
 
 
