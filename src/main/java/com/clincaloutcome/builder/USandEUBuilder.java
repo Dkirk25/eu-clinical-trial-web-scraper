@@ -24,7 +24,7 @@ public class USandEUBuilder {
 
         List<USClinical> usListWithoutDuplicates = getListWithoutDuplicates(usClinicalList);
 
-        // Take list of EU Clinical excel file
+        // Take list of EU Clinical Excel file
         List<EUClinical> euClinicalList = readExcelFile(euFile, EUClinical.class);
 
         List<EUClinical> distinctEUList1 = euClinicalList.stream()

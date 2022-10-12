@@ -1,8 +1,7 @@
 package com.clincaloutcome.filestorage;
 
 import com.clincaloutcome.builder.WebBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -28,10 +27,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Slf4j
 @RestController
 public class FileController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FileController.class);
-
     @Autowired
     private FileStorageService fileStorageService;
 
@@ -41,29 +39,44 @@ public class FileController {
     @Value("${spring.url.response.name}")
     private String responseUrl;
 
+    public static File multipartFileToFile(MultipartFile file) throws IOException {
+        if (file != null && file.getOriginalFilename() != null) {
+            File convFile = new File(file.getOriginalFilename());
+            if (convFile.createNewFile()) {
+                try (FileOutputStream fos = new FileOutputStream(convFile)) {
+                    fos.write(file.getBytes());
+                } catch (Exception e) {
+                    log.error("Cannot write file.", e);
+                }
+            }
+            return convFile;
+        }
+        return null;
+    }
+
     @PostMapping("/uploadSearchQuery")
-    public UploadFileResponse submitSearchQuery(HttpServletRequest request, @RequestParam("searchQuery") String searchQuery, @RequestParam("pageNumber") String pageNumber) throws IOException {
+    public UploadFileResponse submitSearchQuery(@RequestParam("searchQuery") String searchQuery, @RequestParam("pageNumber") String pageNumber) throws IOException {
         webBuilder.singleBuilder(searchQuery, pageNumber);
         MultipartFile multipartFileToSend = getMultipartFile();
         String fileName = fileStorageService.storeFile(multipartFileToSend);
-        String fileUrl = createDownloadUrl(request, fileName);
+        String fileUrl = createDownloadUrl(fileName);
 
         return new UploadFileResponse(fileName, fileUrl, multipartFileToSend.getContentType(), multipartFileToSend.getSize());
     }
 
     @PostMapping("/uploadFile")
-    public UploadFileResponse uploadFile(HttpServletRequest request, @RequestParam("file") MultipartFile bulk) throws IOException {
+    public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile bulk) throws IOException {
         webBuilder.bulkBuilder(multipartFileToFile(bulk));
         MultipartFile multipartFileToSend = getMultipartFile();
         String fileName = fileStorageService.storeFile(multipartFileToSend);
 
-        String fileUrl = createDownloadUrl(request, fileName);
+        String fileUrl = createDownloadUrl(fileName);
 
         return new UploadFileResponse(fileName, fileUrl, bulk.getContentType(), bulk.getSize());
     }
 
     @PostMapping("/uploadMultipleFiles")
-    public List<UploadFileResponse> uploadMultipleFiles(HttpServletRequest request, @RequestParam("files") MultipartFile[] files) throws IOException {
+    public List<UploadFileResponse> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files) throws IOException {
         List<String> listOfFilesNames = new ArrayList<>();
         for (MultipartFile multipartFile : files) {
             File file = multipartFileToFile(multipartFile);
@@ -82,7 +95,7 @@ public class FileController {
             // Run Excel Builder
             webBuilder.crossBuilder(file1, file2);
 
-            String fileUrl = createDownloadUrl(request, "MatchedEUClinicalTrails.xlsx");
+            String fileUrl = createDownloadUrl("MatchedEUClinicalTrails.xlsx");
 
             return Collections.singletonList(new UploadFileResponse("MatchedEUClinicalTrails", fileUrl));
         }
@@ -99,7 +112,7 @@ public class FileController {
         try {
             contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
         } catch (IOException ex) {
-            LOGGER.info("Could not determine file type.");
+            log.info("Could not determine file type.");
         }
 
         // Fallback to the default content type if type could not be determined
@@ -113,16 +126,6 @@ public class FileController {
                 .body(resource);
     }
 
-    private String createDownloadUrl(HttpServletRequest request, String fileName) {
-        String fileUrl;
-        if (request.getServerName().contains("localhost")) {
-            fileUrl = responseUrl;
-        } else {
-            fileUrl = request.getServerName();
-        }
-        return responseUrl + "/downloadFile/" + fileName;
-    }
-
 
     private MultipartFile getMultipartFile() throws IOException {
         File file = new File("./uploads/EUClinicalTrails.xlsx");
@@ -130,18 +133,7 @@ public class FileController {
         return new MockMultipartFile("EUClinicalTrails", file.getName(), MediaType.ALL_VALUE, stream);
     }
 
-    public static File multipartFileToFile(MultipartFile file) throws IOException {
-        if (file != null && file.getOriginalFilename() != null) {
-            File convFile = new File(file.getOriginalFilename());
-            if (convFile.createNewFile()) {
-                try (FileOutputStream fos = new FileOutputStream(convFile)) {
-                    fos.write(file.getBytes());
-                } catch (Exception e) {
-                    LOGGER.error("Cannot write file.", e);
-                }
-            }
-            return convFile;
-        }
-        return null;
+    private String createDownloadUrl(String fileName) {
+        return responseUrl + "/downloadFile/" + fileName;
     }
 }

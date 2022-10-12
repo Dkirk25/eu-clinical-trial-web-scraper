@@ -1,6 +1,7 @@
 package com.clincaloutcome.builder;
 
 import com.clincaloutcome.model.EUClinical;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
@@ -9,8 +10,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.FileOutputStream;
@@ -18,10 +17,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Component
-public
-class ExcelBuilder {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ExcelBuilder.class);
+public class ExcelBuilder {
 
     public void printFromEUTrialExcelFile(Map<Integer, List<List<String>>> listOfResults) {
         String[] columns = {"EudraCT Number", "Sponsor Protocol Number", "Start Date", "Sponsor Name", "Full Title", "Medical Condition", "Disease", "Population Age", "Gender", "Trial Protocol", "Trial Results", "Primary End Points", "Secondary End Points"};
@@ -74,7 +72,7 @@ class ExcelBuilder {
             fileOut.close();
         } catch (
                 IOException e) {
-            LOGGER.error("Can't Parse File {}", e.getMessage());
+            log.error("Can't Parse File {}", e.getMessage());
         }
 
     }
@@ -123,7 +121,7 @@ class ExcelBuilder {
             fileOut.close();
 
         } catch (IOException e) {
-            LOGGER.error("Can't Parse File. {}", e.getMessage());
+            log.error("Can't Parse File. {}", e.getMessage());
         }
     }
 
@@ -138,14 +136,6 @@ class ExcelBuilder {
         CellStyle headerCellStyle = workbook.createCellStyle();
         headerCellStyle.setFont(headerFont);
         return headerCellStyle;
-    }
-
-    private String nullStringReplacement(List<String> value, int i) {
-        if (value.isEmpty()) {
-            return "none";
-        } else {
-            return value.get(i);
-        }
     }
 
     private void createExcelHeaders(String[] columns, CellStyle headerCellStyle, Sheet sheet) {

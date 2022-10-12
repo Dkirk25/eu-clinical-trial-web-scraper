@@ -1,20 +1,19 @@
 package com.clincaloutcome.client;
 
 import com.clincaloutcome.builder.Utils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Component
 public class ParseProtocol {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ParseProtocol.class);
 
     public void handleTrialProtocol(String trial, List<String> listOfResults) {
         String firstProtocol = getProtocolType(trial);
@@ -47,7 +46,7 @@ public class ParseProtocol {
             listOfResults.add(addProtocolToMap("E.5.1 Primary end point", allRows));
             listOfResults.add(addProtocolToMap("E.5.2 Secondary end point", allRows));
         } catch (IOException e) {
-            LOGGER.error("Bad url for primary and secondary endpoints. {}", e.getMessage());
+            log.error("Bad url for primary and secondary endpoints. {}", e.getMessage());
         }
     }
 

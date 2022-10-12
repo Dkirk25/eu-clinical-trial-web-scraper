@@ -1,10 +1,9 @@
 package com.clincaloutcome.client;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,10 +16,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Component
 public class ClinicalPageHelper {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClinicalPageHelper.class);
-
     @Autowired
     private WebScraper webScraper;
 
@@ -36,20 +34,18 @@ public class ClinicalPageHelper {
                     Document doc;
                     doc = SSLHelper.getConnection(url + "&page=" + i).ignoreHttpErrors(true).get();
 
-                    if (doc != null) {
-                        // Get list of tables
-                        Elements tableResults = doc.select("table.result > tbody");
+                    // Get list of tables
+                    Elements tableResults = doc.select("table.result > tbody");
 
-                        tableResults.parallelStream().forEach(trialBody -> mapOfValues.add(webScraper.iterateRowInTable(trialBody)));
-                    }
+                    tableResults.parallelStream().forEach(trialBody -> mapOfValues.add(webScraper.iterateRowInTable(trialBody)));
                     i++;
                 }
                 return mapOfValues;
             } catch (IOException e) {
-                LOGGER.error("Cannot Parse Website!");
+                log.error("Cannot Parse Website!");
             }
         } else {
-            LOGGER.error("Url or Page Number is empty!");
+            log.error("Url or Page Number is empty!");
         }
         return new ArrayList<>();
     }
@@ -68,7 +64,7 @@ public class ClinicalPageHelper {
             }
             return totalResults;
         } catch (IOException e) {
-            LOGGER.error("Can't Read File.");
+            log.error("Can't Read File.");
         }
         return new HashMap<>();
     }
